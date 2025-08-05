@@ -10,7 +10,7 @@ function About() {
         </h2>
 
         <p className="lead text-center text-muted mb-5" style={{ maxWidth: '850px', margin: '0 auto' }}>
-          Shree Sanwariya welcomes you to comfort, flavor, and tranquility. Located in the heart of town,
+          Shri Sanwariya welcomes you to comfort, flavor, and tranquility. Located in the heart of town,
           our hotel offers AC/Non-AC rooms and a pure vegetarian restaurant with warmth and care.
         </p>
 

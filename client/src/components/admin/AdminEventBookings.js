@@ -4,7 +4,6 @@ import axios from 'axios';
 function AdminEventBookings() {
   const [bookings, setBookings] = useState([]);
 
-  // Fetch bookings
   const fetchBookings = () => {
     axios
       .get('http://localhost:5000/api/event-bookings')
@@ -16,7 +15,6 @@ function AdminEventBookings() {
     fetchBookings();
   }, []);
 
-  // Delete booking
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this booking?')) return;
     try {

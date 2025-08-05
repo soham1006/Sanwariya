@@ -13,7 +13,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get all bookings
 router.get('/', async (req, res) => {
   try {
     const bookings = await Booking.find().sort({ createdAt: -1 });

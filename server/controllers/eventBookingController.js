@@ -1,6 +1,5 @@
 const EventBooking = require('../models/EventBooking');
 
-// Save new booking
 exports.createEventBooking = async (req, res) => {
   try {
     const newBooking = new EventBooking(req.body);
@@ -11,7 +10,6 @@ exports.createEventBooking = async (req, res) => {
   }
 };
 
-// Get all bookings (for admin)
 exports.getAllEventBookings = async (req, res) => {
   try {
     const bookings = await EventBooking.find().sort({ createdAt: -1 });

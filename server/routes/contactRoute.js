@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch messages' });
   }
 });
-// DELETE a contact message
+
 router.delete('/:id', async (req, res) => {
   try {
     await Contact.findByIdAndDelete(req.params.id);

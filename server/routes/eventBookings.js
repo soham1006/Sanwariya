@@ -3,10 +3,8 @@ const router = express.Router();
 const eventBookingController = require('../controllers/eventBookingController');
 const EventBooking = require('../models/EventBooking');
 
-// POST a new booking
 router.post('/', eventBookingController.createEventBooking);
 
-// GET all bookings
 router.get('/', eventBookingController.getAllEventBookings);
 
 router.delete('/:id', async (req, res) => {

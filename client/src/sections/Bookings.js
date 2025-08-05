@@ -12,19 +12,16 @@ function Bookings() {
           Secure your room, meal, or event effortlessly through our easy-to-use booking forms.
         </p>
 
-        {/* Room Booking Form */}
         <div className="mb-5 animate-fade">
           <h4 className="text-center text-golden mb-3">Room Booking</h4>
           <RoomBooking />
         </div>
 
-        {/* Meal Booking Form */}
         <div className="mb-5 animate-fade">
           <h4 className="text-center text-golden mb-3">Table Reservation</h4>
           <MealBooking />
         </div>
 
-        {/* Event Booking Form */}
         <div className="mb-5 animate-fade">
           <h4 className="text-center text-golden mb-3">Event Reservation</h4>
           <EventBooking />

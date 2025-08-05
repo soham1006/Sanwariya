@@ -6,16 +6,32 @@ function AdminLogin() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const handleLogin = async (e) => {
+  e.preventDefault(); 
 
-    if (email === 'admin@sanwariya.com' && password === 'admin123') {
+  try {
+    const res = await fetch('http://localhost:5000/api/admin/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
       localStorage.setItem('isAdmin', 'true');
       navigate('/admin');
     } else {
-      alert('Invalid credentials');
+      alert(data.message || 'Login failed');
     }
-  };
+  } catch (err) {
+    console.error('Login error:', err);
+    alert('Server error');
+  }
+};
+
 
   return (
     <div className="container d-flex flex-column justify-content-center align-items-center" style={{ minHeight: '80vh' }}>

@@ -3,33 +3,34 @@ import AdminRoomBookings from './AdminRoomBookings';
 import AdminMealBookings from './AdminMealBookings';
 import AdminEventBookings from './AdminEventBookings';
 import AdminContactMessages from './AdminContactMessages';
+import AdminOrders from './AdminOrder';
 
 function AdminBookings() {
   return (
     <div className="container mt-5 my-5">
 
-      {/* Room Bookings */}
       <section className="mb-5">
        
         <AdminRoomBookings />
       </section>
 
-      {/* Meal Bookings */}
       <section className="mb-5">
         
         <AdminMealBookings />
       </section>
 
-      {/* Event Bookings */}
       <section className="mb-5">
         
         <AdminEventBookings />
       </section>
 
-        {/* Contact Messages */}
       <section className="mb-5">
 
         <AdminContactMessages />
+      </section>
+      <section className="mb-5">
+
+        <AdminOrders />
       </section>
 
       <button
