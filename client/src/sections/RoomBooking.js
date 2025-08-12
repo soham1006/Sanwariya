@@ -28,7 +28,7 @@ function RoomBooking() {
     e.preventDefault();
     setLoadingOtp(true);
     try {
-      await axios.post('http://localhost:3000/api/otp/send-email-otp', {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/otp/send-email-otp`, {
         email: formData.email,
       });
       toast.success('OTP sent to your email');
@@ -44,7 +44,7 @@ function RoomBooking() {
     e.preventDefault();
     setVerifyingOtp(true);
     try {
-      await axios.post('http://localhost:3000/api/otp/verify-email-otp', {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/otp/verify-email-otp`, {
         email: formData.email,
         otp,
       });
@@ -64,7 +64,7 @@ function RoomBooking() {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/bookings', formData);
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/bookings`, formData);
       toast.success('Booking request submitted! We will contact you shortly.');
       setFormData({
         name: '',

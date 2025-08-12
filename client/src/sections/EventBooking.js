@@ -29,7 +29,7 @@ function EventBooking() {
     if (!formData.email) return toast.warning('Please enter a valid email first.');
     setLoadingOtp(true);
     try {
-      await axios.post('http://localhost:3000/api/otp/send-email-otp', {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/otp/send-email-otp`, {
         email: formData.email,
       });
       toast.success('OTP sent to your email.');
@@ -45,7 +45,7 @@ function EventBooking() {
     if (!otp) return toast.warning('Enter the OTP to verify.');
     setVerifyingOtp(true);
     try {
-      await axios.post('http://localhost:3000/api/otp/verify-email-otp', {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/otp/verify-email-otp`, {
         email: formData.email,
         otp,
       });
@@ -65,7 +65,7 @@ function EventBooking() {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/event-bookings', formData);
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/event-bookings`, formData);
       toast.success('Event booking submitted successfully!');
       setFormData({
         name: '',

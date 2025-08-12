@@ -6,7 +6,7 @@ function AdminRoomBookings() {
 
   const fetchBookings = () => {
     axios
-      .get('http://localhost:3000/api/bookings')
+      .get(`${process.env.REACT_APP_API_BASE_URL}/api/bookings`)
       .then(res => setBookings(res.data))
       .catch(err => console.error('Failed to fetch room bookings', err));
   };
@@ -18,7 +18,7 @@ function AdminRoomBookings() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this booking?")) return;
     try {
-      await axios.delete(`http://localhost:3000/api/bookings/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/api/bookings/${id}`);
       fetchBookings();
     } catch (err) {
       console.error("Failed to delete room booking:", err);

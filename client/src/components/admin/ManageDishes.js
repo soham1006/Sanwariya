@@ -14,7 +14,7 @@ function ManageDishes() {
   useEffect(() => {
     const fetchDishes = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/dishes');
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/dishes`);
         const data = await res.json();
         setDishes(data);
       } catch (err) {
@@ -28,7 +28,7 @@ function ManageDishes() {
   const deleteDish = async (id) => {
     if (!window.confirm('Are you sure you want to delete this dish?')) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/dishes/${id}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/dishes/${id}`, {
         method: 'DELETE',
       });
       const data = await res.json();
@@ -63,7 +63,7 @@ function ManageDishes() {
       formDataImage.append('oldPublicId', formData.publicId);
 
       try {
-        const res = await fetch('http://localhost:3000/api/upload', {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload`, {
           method: 'POST',
           body: formDataImage,
         });
@@ -94,7 +94,7 @@ function ManageDishes() {
     }
 
     try {
-      const res = await fetch(`http://localhost:3000/api/dishes/${editingDish}`, {
+      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/dishes/${editingDish}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
