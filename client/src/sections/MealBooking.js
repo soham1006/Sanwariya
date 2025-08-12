@@ -32,7 +32,7 @@ function MealBooking() {
 
     setLoadingOtp(true);
     try {
-      await axios.post('http://localhost:5000/api/otp/send-email-otp', {
+      await axios.post('http://localhost:3000/api/otp/send-email-otp', {
         email: formData.email,
       });
       toast.success('OTP sent to your email');
@@ -52,7 +52,7 @@ function MealBooking() {
 
     setVerifyingOtp(true);
     try {
-      await axios.post('http://localhost:5000/api/otp/verify-email-otp', {
+      await axios.post('http://localhost:3000/api/otp/verify-email-otp', {
         email: formData.email,
         otp,
       });
@@ -74,7 +74,7 @@ function MealBooking() {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/meal-bookings', formData);
+      await axios.post('http://localhost:3000/api/meal-bookings', formData);
       toast.success('Meal reservation submitted successfully!');
       setFormData({
         name: '',

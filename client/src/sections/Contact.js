@@ -20,7 +20,7 @@ function Contact() {
     if (!form.email) return toast.error("Please enter an email first.");
     setLoadingOtp(true);
     try {
-      await axios.post('http://localhost:5000/api/otp/send-email-otp', { email: form.email });
+      await axios.post('http://localhost:3000/api/otp/send-email-otp', { email: form.email });
       setOtpSent(true);
       toast.success('OTP sent to your email');
     } catch (err) {
@@ -35,7 +35,7 @@ function Contact() {
     if (!otp) return toast.warn("Enter the OTP first.");
     setVerifyingOtp(true);
     try {
-      await axios.post('http://localhost:5000/api/otp/verify-email-otp', { email: form.email, otp });
+      await axios.post('http://localhost:3000/api/otp/verify-email-otp', { email: form.email, otp });
       toast.success('Email verified successfully!');
       setEmailVerified(true);
     } catch (err) {
@@ -49,7 +49,7 @@ function Contact() {
     e.preventDefault();
     if (!emailVerified) return toast.warning("Please verify your email first.");
     try {
-      await axios.post('http://localhost:5000/api/contact', form);
+      await axios.post('http://localhost:3000/api/contact', form);
       toast.success('Message sent successfully!');
       setForm({ name: '', email: '', message: '' });
       setOtp('');

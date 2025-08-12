@@ -158,7 +158,7 @@ const debounceGeocode = (address) => {
 
   const sendOtp = async () => {
     try {
-      await axios.post("http://localhost:5000/api/otp/send-email-otp", {
+      await axios.post("http://localhost:3000/api/otp/send-email-otp", {
         email: formData.email,
       });
       toast.success("OTP sent to your email");
@@ -172,7 +172,7 @@ const debounceGeocode = (address) => {
 
   const verifyOtp = async () => {
     try {
-      await axios.post("http://localhost:5000/api/otp/verify-email-otp", {
+      await axios.post("http://localhost:3000/api/otp/verify-email-otp", {
         email: formData.email,
         otp,
       });
@@ -220,7 +220,7 @@ const debounceGeocode = (address) => {
     };
 
     try {
-      const res = await fetch(`http://localhost:5000/api/orders`, {
+      const res = await fetch(`http://localhost:3000/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderDetails),

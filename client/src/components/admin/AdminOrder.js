@@ -6,7 +6,7 @@ function AdminOrders() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/orders');
+      const res = await axios.get('http://localhost:3000/api/orders');
       setOrders(res.data);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -24,7 +24,7 @@ function AdminOrders() {
     }
     if (!window.confirm('Are you sure you want to delete this order?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/orders/${id}`);
+      await axios.delete(`http://localhost:3000/api/orders/${id}`);
       setOrders((prev) => prev.filter(order => order._id !== id));
     } catch (error) {
       console.error('Error deleting order:', error);

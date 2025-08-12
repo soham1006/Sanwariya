@@ -18,7 +18,7 @@ const AddDish = () => {
     formData.append("dishImage", file);
 
     try {
-      const res = await fetch("http://localhost:5000/api/images/upload", {
+      const res = await fetch("http://localhost:3000/api/images/upload", {
         method: "POST",
         body: formData,
       });
@@ -53,7 +53,7 @@ const AddDish = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/api/dishes", {
+      const res = await fetch("http://localhost:3000/api/dishes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

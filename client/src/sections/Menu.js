@@ -37,7 +37,7 @@ function Menu() {
   useEffect(() => {
     const fetchDishes = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/dishes');
+        const res = await fetch('http://localhost:3000/api/dishes');
         const data = await res.json();
         setDishes(data);
       } catch (err) {

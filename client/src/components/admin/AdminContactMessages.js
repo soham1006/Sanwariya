@@ -12,7 +12,7 @@ function AdminContactMessages() {
   }, []);
 
   const fetchMessages = () => {
-    axios.get('http://localhost:5000/api/contact')
+    axios.get('http://localhost:3000/api/contact')
       .then(res => setMessages(res.data))
       .catch(err => console.error('Failed to fetch contact messages:', err));
   };
@@ -20,7 +20,7 @@ function AdminContactMessages() {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this message?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/contact/${id}`);
+      await axios.delete(`http://localhost:3000/api/contact/${id}`);
       fetchMessages();
     } catch (error) {
       console.error("Delete error:", error.message);
