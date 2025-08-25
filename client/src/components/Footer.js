@@ -5,10 +5,11 @@ function Footer() {
     <footer className="footer-section text-light">
       <div className="container py-2 text-center">
         <p className="mb-1 footer-title">
-          &copy; {new Date().getFullYear()} Shree Sanwariya Hotel. All rights reserved.
+          &copy; {new Date().getFullYear()} Shree Sanwariya Hotel.<br/> All rights reserved.
         </p>
-        <p className="mb-0 small text-muted">
-          Contact us: <a href="tel:+919753600206" className="footer-link">+91 97536 00206</a> | <a href="mailto:info@sanwariyahotel.com" className="footer-link">info@sanwariyahotel.com</a>
+        <p className="mb-0 small">
+          <a href="tel:+919753600206" className="footer-link">Contact us: +91 97536 00206</a> 
+          <br/> <a href="mailto:info@sanwariyahotel.com" className="footer-link">info@sanwariyahotel.com</a>
         </p>
       </div>
     </footer>

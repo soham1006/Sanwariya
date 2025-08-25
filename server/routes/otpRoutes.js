@@ -31,12 +31,34 @@ router.post('/send-email-otp', async (req, res) => {
       }
     });
 
-    const mailOptions = {
-      from: process.env.SENDGRID_FROM_EMAIL,
-      to: email,
-      subject: 'Your OTP for Booking',
-      text: `Your OTP is ${otp}. It is valid for 5 minutes.`
-    };
+    // const mailOptions = {
+    //   from: process.env.SENDGRID_FROM_EMAIL,
+    //   to: email,
+    //   subject: 'Your OTP for Booking',
+    //   text: `Your OTP is ${otp}. It is valid for 5 minutes.`
+    // };
+
+  const mailOptions = {
+  from: `"Sanwariya Hotel" <verified-sender@sendgrid.net>`, // verified sender
+  to: email,
+  subject: 'Sanwariya Hotel OTP Verification',
+  text: `Your Sanwariya Hotel OTP is ${otp}. It is valid for 5 minutes. If you did not request this, please ignore this email.`,
+  html: `
+    <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+      <h2 style="color: #2c3e50;">Hello,</h2>
+      <p>Your One-Time Password (OTP) for booking with <b>Sanwariya Hotel</b> is:</p>
+      <h1 style="color: #e74c3c;">${otp}</h1>
+      <p>This code is valid for <b>5 minutes</b>.</p>
+      <br/>
+      <p>If you did not request this, please ignore this email.</p>
+      <br/>
+      <p>Thank you,<br/>Sanwariya Hotel Team</p>
+    </div>
+  `,
+};
+
+
+
 
     await transporter.sendMail(mailOptions);
     res.json({ message: 'OTP sent successfully' });

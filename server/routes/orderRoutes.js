@@ -103,7 +103,7 @@ router.post('/', async (req, res) => {
       message: 'Order placed successfully! Email sent.',
       order: fullOrder,
       upiMessage: order.paymentMethod === 'UPI'
-        ? 'Please proceed to pay using UPI: sanwariya@ybl (confirm via call/message).'
+        ? 'Please proceed to pay using UPI: 9753600206@ybl'
         : null
     });
 

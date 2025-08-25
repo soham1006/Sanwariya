@@ -27,7 +27,7 @@ function AdminMealBookings() {
 
   return (
     <div className="container my-5">
-      <h2 className="text-center elegant-title text-golden mb-4">Meal Reservations</h2>
+      <h2 className="text-center elegant-title text-golden mb-4">Table Reservations</h2>
       <div className="table-responsive shadow-sm rounded">
         <table className="table table-bordered table-striped text-center">
           <thead className="table-dark">

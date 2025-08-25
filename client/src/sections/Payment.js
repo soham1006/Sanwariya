@@ -348,6 +348,7 @@ const debounceGeocode = (address) => {
                   pattern="[0-9]{10}"
                 />
               </div>
+              <h4 className="text-danger text-bold">Address should be within 10km.</h4>
               <div className="mb-3">
                 <label className="form-label">House No. & Landmark</label>
                 <input
