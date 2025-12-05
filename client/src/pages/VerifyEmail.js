@@ -8,7 +8,7 @@ export default function VerifyEmail() {
   const [otp, setOtp] = useState("");
 
   const handleVerify = async () => {
-    const res = await axios.post("http://localhost:5000/api/auth/verify-user", {
+    const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/auth/verify-user`, {
       email: state.email,
       otp
     });

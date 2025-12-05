@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function OtpModal({ email, onVerified, onClose }) {
-  const API = "http://localhost:5000";
+  const API = "https://sanwariya.onrender.com";
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(30);
   const [resendDisabled, setResendDisabled] = useState(true);
