@@ -1,4 +1,5 @@
  import React, { useEffect, useState } from 'react';
+ import AdminLayout from "./AdminLayout";
 import axios from 'axios';
 
 function AdminContactMessages() {
@@ -39,6 +40,7 @@ function AdminContactMessages() {
   const totalPages = Math.ceil(filteredMessages.length / messagesPerPage);
 
   return (
+    <AdminLayout>
     <div className="container my-5">
       <h2 className="text-center elegant-title text-golden mb-4">Contact Messages</h2>
 
@@ -106,6 +108,7 @@ function AdminContactMessages() {
         </ul>
       </div>
     </div>
+    </AdminLayout>
   );
 }
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import AdminLayout from './AdminLayout';
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
@@ -33,6 +34,7 @@ function AdminOrders() {
   };
 
   return (
+    <AdminLayout>
     <div className="container py-5">
       <h2 className="mb-4">All Orders</h2>
       <div className="table-responsive">
@@ -101,6 +103,7 @@ function AdminOrders() {
         </table>
       </div>
     </div>
+    </AdminLayout>
   );
 }
 

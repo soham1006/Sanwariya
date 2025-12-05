@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AdminLayout from "./AdminLayout";
 import axios from 'axios';
 
 function AdminEventBookings() {
@@ -26,6 +27,7 @@ function AdminEventBookings() {
   };
 
   return (
+    <AdminLayout>
     <div className="container my-5">
       <h2 className="text-center elegant-title text-golden mb-4">Event Bookings</h2>
 
@@ -75,6 +77,7 @@ function AdminEventBookings() {
         </table>
       </div>
     </div>
+    </AdminLayout>
   );
 }
 

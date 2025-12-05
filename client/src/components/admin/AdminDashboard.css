@@ -1,0 +1,52 @@
+.admindash-container {
+  padding: 30px;
+  text-align: center;
+}
+
+.admindash-title {
+  font-size: 32px;
+  color: #f1c40f;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.admindash-subtitle {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 35px;
+}
+
+.admindash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.admindash-card {
+  background: #111;
+  color: white;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  text-decoration: none;
+  transition: 0.25s;
+  border-left: 4px solid #f1c40f;
+}
+
+.admindash-card:hover {
+  background: #1a1a1a;
+  transform: translateY(-4px);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.icon {
+  font-size: 40px;
+  color: #f1c40f;
+  margin-bottom: 10px;
+}
+
+.admindash-card h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}

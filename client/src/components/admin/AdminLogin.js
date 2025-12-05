@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AdminLayout from "./AdminLayout";
 
 function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -34,6 +35,7 @@ function AdminLogin() {
 
 
   return (
+    <AdminLayout>
     <div className="container d-flex flex-column justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
       <h2 className="text-center mb-4">Admin Login</h2>
 
@@ -65,6 +67,7 @@ function AdminLogin() {
         </form>
       </div>
     </div>
+    </AdminLayout>
   );
 }
 

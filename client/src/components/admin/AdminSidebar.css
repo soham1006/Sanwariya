@@ -1,0 +1,240 @@
+/* ---------- MAIN WRAPPER ---------- */
+.admin-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+/* ---------- SIDEBAR ---------- */
+.admin-sidebar {
+  width: 230px;
+  background: #111;
+  height: calc(100vh - 60px);
+  color: #fff;
+  padding: 20px;
+  position: fixed;
+  left: 0;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.admin-sidebar.collapsed {
+  width: 70px !important;
+}
+
+/* ---------- SIDEBAR LINKS ---------- */
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  margin: 12px 0;
+}
+
+.sidebar-menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.sidebar-menu a.active,
+.sidebar-menu a:hover {
+  background: goldenrod;
+  color: black;
+  font-weight: bold;
+}
+
+/* ---------- DESKTOP TOGGLE ---------- */
+.sidebar-toggle-btn {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+  color: goldenrod;
+  margin-bottom: 20px;
+}
+
+/* ---------- MAIN CONTENT ---------- */
+.admin-content {
+  margin-left: 230px;
+  padding: 25px;
+  transition: all 0.3s;
+  width: calc(100% - 230px);
+}
+
+.admin-content.expanded {
+  margin-left: 70px;
+  width: calc(100% - 70px);
+}
+
+/* ====================================================== */
+/*                      MOBILE VIEW                       */
+/* ====================================================== */
+@media (max-width: 768px) {
+
+  /* Sidebar hidden initially */
+  .admin-sidebar {
+    left: -230px;
+    width: 230px !important;
+  }
+
+  /* Slide in */
+  .admin-sidebar.mobile-open {
+    left: 0 !important;
+  }
+
+  /* Main content full width */
+  .admin-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+
+  /* FLOATING MOBILE BUTTON */
+  .mobile-toggle-btn {
+    position: fixed;
+    top: 75px;
+    left: 15px;
+    z-index: 1200;
+    background: goldenrod;
+    color: black;
+    font-size: 24px;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+  }
+
+  /* Overlay when sidebar is open */
+  .sidebar-overlay {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 60px);
+    background: rgba(0,0,0,0.4);
+    z-index: 900;
+  }
+
+  /* Hide desktop toggle */
+  .sidebar-toggle-btn {
+    display: none;
+  }
+}
+
+
+/* ---------- TOGGLE BUTTON ---------- */
+.sidebar-toggle-btn {
+  background: #f1c40f;
+  border: none;
+  color: black;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 20px;
+  margin-left: 10px;
+  z-index: 9999;
+}
+
+/* Fix toggle button position in mobile */
+@media (max-width: 768px) {
+  .sidebar-toggle-btn {
+    position: fixed !important;
+    top: 20px !important;
+    left: 12px !important;
+    z-index: 2000 !important;
+    background: #f1c40f;
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-top: 20px;
+  }
+}
+
+/* When sidebar is open, move toggle slightly right */
+@media (max-width: 768px) {
+  .admin-sidebar.mobile-open ~ .sidebar-toggle-btn {
+    left: 230px !important;
+  }
+}
+
+
+
+/* ---------- SIDEBAR ---------- */
+.admin-sidebar {
+  width: 240px;
+  background: #111;
+  color: white;
+  height: 100vh;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  padding: 20px;
+  transition: 0.3s ease;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+/* Collapsed (desktop) */
+.admin-sidebar.collapsed {
+  width: 70px;
+}
+
+/* Mobile closed */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    left: -240px;
+    width: 240px;
+  }
+
+  .admin-sidebar.mobile-open {
+    left: 0;
+  }
+}
+
+/* Sidebar menu */
+.sidebar-menu li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  color: white;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.sidebar-menu li a.active,
+.sidebar-menu li a:hover {
+  background: #d4a017;
+  color: #000;
+  border-radius: 6px;
+}
+
+/* ---------- TOGGLE BUTTON ---------- */
+.toggle-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  background: #d4a017;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 20px;
+  z-index: 2000;
+  border: none;
+  cursor: pointer;
+}
+
+/* Move toggle when sidebar slides on mobile */
+@media (max-width: 768px) {
+  .admin-sidebar.mobile-open ~ .toggle-btn {
+    left: 250px;
+  }
+}

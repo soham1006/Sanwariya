@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AdminLayout from "./AdminLayout";
 
 function ManageDishes() {
   const [dishes, setDishes] = useState([]);
@@ -127,6 +128,7 @@ function ManageDishes() {
   };
 
   return (
+    <AdminLayout>
     <div className="container mt-5">
       <h3 className="text-golden elegant-title mb-4">Manage Dishes</h3>
       <div className="table-responsive">
@@ -253,6 +255,7 @@ function ManageDishes() {
         </table>
       </div>
     </div>
+    </AdminLayout>
   );
 }
 

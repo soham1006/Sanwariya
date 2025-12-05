@@ -10,7 +10,15 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 200
+}));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,7 +40,9 @@ const mealBookingRoutes = require('./routes/mealBookingRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const otpRoutes = require('./routes/otpRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const authRoutes = require("./routes/auth");
 
+app.use("/api/auth", authRoutes);
 app.use('/api/bookings', bookingRoute);
 app.use('/api/contact', contactRoute);
 app.use('/api/dishes', dishRoutes);

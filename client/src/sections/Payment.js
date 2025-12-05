@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-//import { QRCodeSVG } from 'qrcode.react';
+import { QRCodeSVG } from "qrcode.react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -13,7 +13,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
 });
 
-const RESTAURANT_COORDS = { lat: 23.33880, lng: 76.83752 };
+const RESTAURANT_COORDS = { lat: 23.3388, lng: 76.83752 };
 
 const toRad = (deg) => deg * (Math.PI / 180);
 const getDistanceKm = (lat1, lon1, lat2, lon2) => {
@@ -60,7 +60,9 @@ function Payment({ cart, setCart, total }) {
     email: "",
     phone: "",
     address: "",
+    HouseNo: "",
     paymentMethod: "Cash on Delivery",
+    utr: "", // added UTR field
   });
 
   const [coordinates, setCoordinates] = useState({
@@ -70,10 +72,10 @@ function Payment({ cart, setCart, total }) {
   const [deliveryCharge, setDeliveryCharge] = useState(null);
   const [finalTotal, setFinalTotal] = useState(total);
   const [sendingOtp, setSendingOtp] = useState(false);
-  const [placingOrder, ] = useState(false);
+  const [placingOrder] = useState(false);
   const [calculating, setCalculating] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [upiPaid, ] = useState(false);
+  const [upiPaid, setUpiPaid] = useState(false);
   const [, setManuallyTyped] = useState(false);
 
   const [otpSent, setOtpSent] = useState(false);
@@ -90,9 +92,7 @@ function Payment({ cart, setCart, total }) {
 
       const result = res.data;
       if (!result?.address) {
-        toast.error(
-          "Unable to determine location. Please reposition the map pin."
-        );
+        toast.error("Unable to determine location. Please reposition the map pin.");
         return { charge: null };
       }
 
@@ -137,14 +137,14 @@ function Payment({ cart, setCart, total }) {
 
   const debounceRef = React.useRef(null);
 
-const debounceGeocode = (address) => {
-  if (debounceRef.current) {
-    clearTimeout(debounceRef.current);
-  }
-  debounceRef.current = setTimeout(() => {
-    geocodeAddress(address);
-  }, 2000); 
-};
+  const debounceGeocode = (address) => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+    debounceRef.current = setTimeout(() => {
+      geocodeAddress(address);
+    }, 2000);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -184,12 +184,7 @@ const debounceGeocode = (address) => {
   };
 
   const handlePlaceOrder = async () => {
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.address
-    ) {
+    if (!formData.name || !formData.email || !formData.phone || !formData.address) {
       toast.warning("Please fill in all required fields.");
       return;
     }
@@ -199,9 +194,16 @@ const debounceGeocode = (address) => {
       return;
     }
 
-    if (formData.paymentMethod === "UPI" && !upiPaid) {
-      toast.warning("Please confirm UPI payment before proceeding.");
-      return;
+    // 🔐 Secure UPI validation
+    if (formData.paymentMethod === "UPI") {
+      if (!upiPaid) {
+        toast.warning("Please confirm you have completed the UPI payment.");
+        return;
+      }
+      if (!formData.utr || formData.utr.length < 6) {
+        toast.warning("Please enter a valid UPI Transaction ID (UTR).");
+        return;
+      }
     }
 
     const { charge } = await calculateDeliveryCharge();
@@ -265,10 +267,7 @@ const debounceGeocode = (address) => {
       <div className="bg cream py-5">
         <div className="container">
           <h2 className="text-success mb-4">Order Placed Successfully!</h2>
-          <p>
-            Thank you for ordering from us. You'll receive a confirmation email
-            shortly.
-          </p>
+          <p>Thank you for ordering from us. You'll receive a confirmation email shortly.</p>
         </div>
       </div>
     );
@@ -282,6 +281,7 @@ const debounceGeocode = (address) => {
           <div className="col-md-6">
             <h5 className="mb-3">Delivery Details</h5>
             <form onSubmit={(e) => e.preventDefault()}>
+              {/* Name */}
               <div className="mb-3">
                 <label className="form-label">Name</label>
                 <input
@@ -293,6 +293,8 @@ const debounceGeocode = (address) => {
                   required
                 />
               </div>
+
+              {/* Email */}
               <div className="mb-3">
                 <label className="form-label">Email</label>
                 <input
@@ -303,6 +305,7 @@ const debounceGeocode = (address) => {
                   onChange={handleChange}
                   required
                 />
+
                 {!emailVerified && (
                   <>
                     <button
@@ -322,20 +325,18 @@ const debounceGeocode = (address) => {
                           value={otp}
                           onChange={(e) => setOtp(e.target.value)}
                         />
-                        <button
-                          className="btn btn-sm btn-success mt-2"
-                          onClick={verifyOtp}
-                        >
+                        <button className="btn btn-sm btn-success mt-2" onClick={verifyOtp}>
                           Verify OTP
                         </button>
                       </>
                     )}
                   </>
                 )}
-                {emailVerified && (
-                  <span className="text-success small">Email verified ✅</span>
-                )}
+
+                {emailVerified && <span className="text-success small">Email verified ✅</span>}
               </div>
+
+              {/* Phone */}
               <div className="mb-3">
                 <label className="form-label">Phone</label>
                 <input
@@ -348,7 +349,10 @@ const debounceGeocode = (address) => {
                   pattern="[0-9]{10}"
                 />
               </div>
+
               <h4 className="text-danger text-bold">Address should be within 10km.</h4>
+
+              {/* House No */}
               <div className="mb-3">
                 <label className="form-label">House No. & Landmark</label>
                 <input
@@ -360,10 +364,10 @@ const debounceGeocode = (address) => {
                   required
                 />
               </div>
+
+              {/* Address */}
               <div className="mb-3">
-                <label className="form-label">
-                  Address (auto-filled from map )
-                </label>
+                <label className="form-label">Address (auto-filled from map)</label>
                 <textarea
                   className="form-control"
                   name="address"
@@ -372,6 +376,8 @@ const debounceGeocode = (address) => {
                   rows="3"
                 />
               </div>
+
+              {/* Map */}
               <div className="mb-3">
                 <label className="form-label">Pin Your Exact Location</label>
                 <MapContainer
@@ -384,12 +390,11 @@ const debounceGeocode = (address) => {
                     attribution="&copy; OpenStreetMap contributors"
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                  <DraggableMarker
-                    coordinates={coordinates}
-                    setCoordinates={setCoordinates}
-                  />
+                  <DraggableMarker coordinates={coordinates} setCoordinates={setCoordinates} />
                 </MapContainer>
               </div>
+
+              {/* Payment Method */}
               <div className="mb-3">
                 <label className="form-label">Payment Method</label>
                 <select
@@ -403,29 +408,50 @@ const debounceGeocode = (address) => {
                 </select>
               </div>
 
+              {/* UPI Section (Improved + Safe) */}
               {formData.paymentMethod === "UPI" && (
-                <h2>Not Available! We will update it soon</h2>
-                // <div className="mt-3 p-3 border rounded bg-light">
-                //   <h6>Scan to Pay ₹{finalTotal}</h6>
-                //   <QRCodeSVG value={`upi://pay?pa=9753600206@ybl&pn=Arjun&am=${finalTotal}&cu=INR`} size={150} />
-                //   <p className="small mt-2 mb-0">UPI ID: <strong>9753600206@ybl</strong></p>
-                //   <div className="form-check mt-2">
-                //     <input
-                //       className="form-check-input"
-                //       type="checkbox"
-                //       checked={upiPaid}
-                //       onChange={(e) => setUpiPaid(e.target.checked)}
-                //       id="upiPaidConfirm"
-                //     />
-                //     <label className="form-check-label" htmlFor="upiPaidConfirm">
-                //       I have completed the UPI payment.
-                //     </label>
-                //   </div>
-                // </div>
+                <div className="mt-3 p-3 border rounded bg-light">
+                  <h6>Scan to Pay ₹{finalTotal}</h6>
+
+                  <QRCodeSVG
+                    value={`upi://pay?pa=9753600206@ybl&pn=Arjun&am=${finalTotal}&cu=INR`}
+                    size={150}
+                  />
+
+                  <p className="small mt-2 mb-0">
+                    UPI ID: <strong>9753600206@ybl</strong>
+                  </p>
+
+                  <div className="mt-3">
+                    <label className="form-label fw-bold">Enter UPI Transaction ID (UTR)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="e.g., 324519876543"
+                      value={formData.utr}
+                      onChange={(e) => setFormData({ ...formData, utr: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-check mt-3">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      checked={upiPaid}
+                      onChange={(e) => setUpiPaid(e.target.checked)}
+                      id="upiPaidConfirm"
+                    />
+                    <label className="form-check-label" htmlFor="upiPaidConfirm">
+                      I have completed the UPI payment.
+                    </label>
+                  </div>
+                </div>
               )}
             </form>
           </div>
 
+          {/* Right side order summary */}
           <div className="col-md-6">
             <h5 className="mb-3">Order Summary</h5>
             <ul className="list-group mb-3">
@@ -434,15 +460,17 @@ const debounceGeocode = (address) => {
                   key={idx}
                   className="list-group-item d-flex justify-content-between align-items-center"
                 >
-                  {item.name} {item.variant ? `(${item.variant})` : ""} - ₹
-                  {item.price}
+                  {item.name} {item.variant ? `(${item.variant})` : ""} - ₹{item.price}
                 </li>
               ))}
             </ul>
+
             <p className="fw-bold">Items Total: ₹{total}</p>
+
             {deliveryCharge !== null && (
               <p className="fw-bold">Delivery Charge: ₹{deliveryCharge}</p>
             )}
+
             <p className="fw-bold">Final Total: ₹{finalTotal}</p>
 
             <button

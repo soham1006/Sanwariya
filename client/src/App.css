@@ -69,11 +69,20 @@ body {
   letter-spacing: 1px;
 }
 
+.navbar-nav .nav-item {
+  margin: 0 !important;
+}
+
 .nav-link {
   color: #fff !important;
   font-weight: 500;
   margin-left: 15px;
   transition: color 0.3s ease;
+}
+
+.navbar .nav-link {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
 }
 
 .nav-link:hover {
@@ -314,4 +323,13 @@ main {
     font-size: 0.8rem;
     padding: 6px 10px;
   }
+}
+
+.auth-page-container {
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import AdminLayout from './AdminLayout';
 
 function AdminMealBookings() {
   const [bookings, setBookings] = useState([]);
@@ -26,6 +27,7 @@ function AdminMealBookings() {
   };
 
   return (
+    <AdminLayout>
     <div className="container my-5">
       <h2 className="text-center elegant-title text-golden mb-4">Table Reservations</h2>
       <div className="table-responsive shadow-sm rounded">
@@ -72,6 +74,7 @@ function AdminMealBookings() {
         </table>
       </div>
     </div>
+    </AdminLayout>
   );
 }
 

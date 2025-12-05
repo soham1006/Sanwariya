@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import AdminLayout from "./AdminLayout";
+import AdminSidebar from "./AdminSidebar";
 
 const AddDish = () => {
   const [name, setName] = useState("");
@@ -101,6 +103,7 @@ const AddDish = () => {
   ];
 
   return (
+    <AdminLayout>
     <div className="container mt-5 my-5">
       <h3 className="text-gold elegant-title mb-4">Add New Dish</h3>
 
@@ -200,6 +203,7 @@ const AddDish = () => {
         </div>
       </form>
     </div>
+    </AdminLayout>
   );
 };
 
