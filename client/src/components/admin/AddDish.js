@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import AdminLayout from "./AdminLayout";
-import AdminSidebar from "./AdminSidebar";
 
 const AddDish = () => {
   const [name, setName] = useState("");
