@@ -49,7 +49,7 @@ async function sendConfirmationEmail(order) {
     `;
 
     const response = await resend.emails.send({
-      from: "Sanwariya Hotel <sanwariyahotel@resend.dev>",   // ✔ FIXED
+      from: "Sanwariya Hotel <sanwariyahotel@resend.dev>",   
       to: order.email,
       subject: "Order Confirmation - Sanwariya Hotel",
       html: emailHtml,
