@@ -32,7 +32,7 @@ export default function Register() {
     setLoadingOtp(true);
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/auth/send-otp`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/auth/send-email-otp`,
         { email: form.email.trim() }
       );
 
@@ -58,7 +58,7 @@ export default function Register() {
     setVerifyingOtp(true);
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/auth/verify-otp`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/auth/verify-email-otp`,
         { email: form.email.trim(), otp: otp.trim() }
       );
 
@@ -102,7 +102,7 @@ export default function Register() {
       }
 
       toast.success("Account created!");
-      navigate("/login"); // 🎉 Redirect works now!
+      navigate("/login"); 
 
     } catch (err) {
       toast.error(err.response?.data?.message || "Registration failed");
