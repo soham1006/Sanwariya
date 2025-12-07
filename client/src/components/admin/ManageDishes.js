@@ -19,27 +19,11 @@ function ManageDishes() {
         const data = await res.json();
         setDishes(data);
       } catch (err) {
-        console.error('Error fetching dishes:', err);
+        console.error('Fetch error:', err);
       }
     };
-
     fetchDishes();
   }, []);
-
-  const deleteDish = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this dish?')) return;
-    try {
-      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/dishes/${id}`, {
-        method: 'DELETE',
-      });
-      const data = await res.json();
-      alert('✅ ' + data.message);
-      setDishes((prev) => prev.filter((dish) => dish._id !== id));
-    } catch (err) {
-      console.error('Error deleting dish:', err);
-      alert('❌ Failed to delete dish.');
-    }
-  };
 
   const handleEditClick = (dish) => {
     setEditingDish(dish._id);
@@ -55,33 +39,44 @@ function ManageDishes() {
   const handleInputChange = async (e) => {
     const { name, value, files } = e.target;
 
-    if (name === 'image') {
+    // IMAGE UPLOAD
+    if (name === "image") {
       const file = files[0];
       if (!file) return;
 
       const formDataImage = new FormData();
-      formDataImage.append('dishImage', file);
-      formDataImage.append('oldPublicId', formData.publicId);
+      formDataImage.append("dishImage", file);
+      formDataImage.append("oldPublicId", formData.publicId);
 
       try {
         const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload`, {
-          method: 'POST',
+          method: "POST",
           body: formDataImage,
         });
 
         const data = await res.json();
+        console.log("UPLOAD RESPONSE:", data);
+
+        if (!data.imageUrl) {
+          alert("❌ Upload failed: " + data.message);
+          return;
+        }
+
         setFormData((prev) => ({
           ...prev,
           imageUrl: data.imageUrl,
           publicId: data.publicId,
         }));
+
       } catch (err) {
-        console.error('Image upload failed:', err);
-        alert('❌ Image upload failed.');
+        console.error("Image upload failed:", err);
+        alert("❌ Image upload failed.");
       }
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      return;
     }
+
+    // NORMAL INPUT
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleEditSubmit = async (e) => {
@@ -114,147 +109,124 @@ function ManageDishes() {
       );
 
       setEditingDish(null);
-      setFormData({
-        name: '',
-        category: '',
-        price: '',
-        imageUrl: '',
-        publicId: '',
-      });
+      setFormData({ name: '', category: '', price: '', imageUrl: '', publicId: '' });
+
     } catch (err) {
-      console.error('Error updating dish:', err);
-      alert(' Failed to update dish.');
+      console.error('Update error:', err);
+      alert("❌ Failed to update dish");
     }
   };
 
+  const handleDelete = async (id, publicId) => {
+  if (!window.confirm("Are you sure you want to delete this dish?")) return;
+
+  try {
+    const res = await fetch(
+      `${process.env.REACT_APP_API_BASE_URL}/api/dishes/${id}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publicId }), // send Cloudinary ID
+      }
+    );
+
+    const data = await res.json();
+    alert("✅ " + data.message);
+
+    // remove from UI instantly
+    setDishes((prev) => prev.filter((d) => d._id !== id));
+  } catch (err) {
+    console.error("Delete error:", err);
+    alert("❌ Failed to delete dish");
+  }
+};
+
+
   return (
     <AdminLayout>
-    <div className="container mt-5">
-      <h3 className="text-golden elegant-title mb-4">Manage Dishes</h3>
-      <div className="table-responsive">
-        <table className="table table-bordered text-center">
-          <thead className="table-light">
-            <tr>
-              <th>Image</th>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Edit Image</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dishes.map((dish) => (
-              <tr key={dish._id}>
-                <td>
-                  <img
-                    src={dish.imageUrl}
-                    alt={dish.name}
-                    style={{ width: '80px', borderRadius: '5px' }}
-                  />
-                </td>
-                <td>
-                  {editingDish === dish._id ? (
-                    <input
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  ) : (
-                    dish.name
-                  )}
-                </td>
-                <td>
-                  {editingDish === dish._id ? (
-                    <input
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  ) : (
-                    dish.category
-                  )}
-                </td>
-                <td>
-                  {editingDish === dish._id ? (
-                    <input
-                      name="price"
-                      value={formData.price}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  ) : typeof dish.price === 'object' ? (
-                    <>
-                      Half: ₹{dish.price.half || '-'} <br />
-                      Full: ₹{dish.price.full || '-'}
-                    </>
-                  ) : (
-                    <>₹{dish.price}</>
-                  )}
-                </td>
-                <td>
-                  {editingDish === dish._id ? (
-                    <>
-                      <input
-                        type="file"
-                        name="image"
-                        accept="image/*"
-                        onChange={handleInputChange}
-                        className="form-control"
-                      />
-                      {formData.imageUrl && (
-                        <img
-                          src={formData.imageUrl}
-                          alt="Preview"
-                          style={{ width: '60px', marginTop: '5px' }}
-                        />
-                      )}
-                    </>
-                  ) : (
-                    '—'
-                  )}
-                </td>
-                <td>
-                  {editingDish === dish._id ? (
-                    <>
-                      <button
-                        className="btn btn-success btn-sm me-2"
-                        onClick={handleEditSubmit}
-                      >
-                        Save
-                      </button>
-                      <button
-                        className="btn btn-secondary btn-sm"
-                        onClick={() => setEditingDish(null)}
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className="btn btn-primary btn-sm me-2"
-                        onClick={() => handleEditClick(dish)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => deleteDish(dish._id)}
-                      >
-                        Delete
-                      </button>
-                    </>
-                  )}
-                </td>
+      <div className="container mt-5">
+        <h3 className="text-golden elegant-title mb-4">Manage Dishes</h3>
+
+        <div className="table-responsive">
+          <table className="table table-bordered text-center">
+            <thead className="table-light">
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Edit Image</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {dishes.map((dish) => (
+                <tr key={dish._id}>
+                  <td>
+                    <img src={dish.imageUrl} alt={dish.name} style={{ width: 80, borderRadius: 5 }} />
+                  </td>
+
+                  <td>
+                    {editingDish === dish._id ? (
+                      <input name="name" value={formData.name} onChange={handleInputChange} className="form-control" />
+                    ) : dish.name}
+                  </td>
+
+                  <td>
+                    {editingDish === dish._id ? (
+                      <input name="category" value={formData.category} onChange={handleInputChange} className="form-control" />
+                    ) : dish.category}
+                  </td>
+
+                  <td>
+                    {editingDish === dish._id ? (
+                      <input name="price" value={formData.price} onChange={handleInputChange} className="form-control" />
+                    ) : typeof dish.price === "object" ? (
+                      <>
+                        Half: ₹{dish.price.half} <br /> Full: ₹{dish.price.full}
+                      </>
+                    ) : (
+                      <>₹{dish.price}</>
+                    )}
+                  </td>
+
+                  <td>
+                    {editingDish === dish._id ? (
+                      <>
+                        <input type="file" name="image" accept="image/*" onChange={handleInputChange} className="form-control" />
+                        {formData.imageUrl && (
+                          <img src={formData.imageUrl} alt="Preview" style={{ width: 60, marginTop: 5 }} />
+                        )}
+                      </>
+                    ) : "—"}
+                  </td>
+
+                  <td>
+                    {editingDish === dish._id ? (
+                      <>
+                        <button className="btn btn-success btn-sm me-2" onClick={handleEditSubmit}>Save</button>
+                        <button className="btn btn-secondary btn-sm" onClick={() => setEditingDish(null)}>Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <button className="btn btn-primary btn-sm me-2" onClick={() => handleEditClick(dish)}>Edit</button>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => handleDelete(dish._id, dish.publicId)}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+        </div>
       </div>
-    </div>
     </AdminLayout>
   );
 }

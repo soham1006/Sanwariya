@@ -12,7 +12,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'dishes',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'], 
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
   },
 });
 
