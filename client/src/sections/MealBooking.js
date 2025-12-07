@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 function MealBooking() {
+
+  const navigate = useNavigate(); // ✅ FIX
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -19,12 +23,27 @@ function MealBooking() {
   const [loadingOtp, setLoadingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
 
+  // 🚨 LOGIN CHECK ON TYPING (SAME AS ROOM BOOKING)
   const handleChange = (e) => {
+    const token = localStorage.getItem("userToken");
+
+    if (!token) {
+      toast.error("Please login to fill the form");
+      return navigate("/login");
+    }
+
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 🚨 LOGIN CHECK ON SENDING OTP
   const sendOtp = async () => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      toast.error("Please login first");
+      return navigate("/login");
+    }
+
     if (!formData.email) {
       toast.error('Please enter a valid email');
       return;
@@ -44,7 +63,14 @@ function MealBooking() {
     }
   };
 
+  // 🚨 LOGIN CHECK ON VERIFY OTP
   const verifyOtp = async () => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      toast.error("Please login first");
+      return navigate("/login");
+    }
+
     if (!otp) {
       toast.error('Please enter the OTP');
       return;
@@ -65,8 +91,15 @@ function MealBooking() {
     }
   };
 
+  // 🚨 LOGIN CHECK ON SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      toast.error("Please login to submit reservation");
+      return navigate("/login");
+    }
 
     if (!emailVerified) {
       toast.warning('Please verify your email before submitting.');
@@ -76,6 +109,7 @@ function MealBooking() {
     try {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/meal-bookings`, formData);
       toast.success('Meal reservation submitted successfully!');
+
       setFormData({
         name: '',
         phone: '',
@@ -85,9 +119,11 @@ function MealBooking() {
         guests: '',
         specialRequests: '',
       });
+
       setOtp('');
       setOtpSent(false);
       setEmailVerified(false);
+
     } catch (err) {
       console.error('Error submitting meal booking:', err);
       toast.error('Something went wrong. Please try again.');
@@ -136,6 +172,7 @@ function MealBooking() {
                 onChange={handleChange}
                 required
               />
+
               {!emailVerified && (
                 <div className="mt-2">
                   <button
@@ -146,6 +183,7 @@ function MealBooking() {
                   >
                     {loadingOtp ? 'Sending OTP...' : 'Send OTP'}
                   </button>
+
                   {otpSent && (
                     <div className="mt-2">
                       <input
@@ -167,6 +205,7 @@ function MealBooking() {
                   )}
                 </div>
               )}
+
               {emailVerified && (
                 <div className="text-success mt-2">✅ Email verified</div>
               )}
@@ -227,6 +266,7 @@ function MealBooking() {
             >
               Submit Reservation
             </button>
+
           </form>
         </div>
       </div>

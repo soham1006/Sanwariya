@@ -3,9 +3,11 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { QRCodeSVG } from "qrcode.react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+// Fix marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
@@ -15,6 +17,7 @@ L.Icon.Default.mergeOptions({
 
 const RESTAURANT_COORDS = { lat: 23.3388, lng: 76.83752 };
 
+// Helpers
 const toRad = (deg) => deg * (Math.PI / 180);
 const getDistanceKm = (lat1, lon1, lat2, lon2) => {
   const R = 6371;
@@ -22,11 +25,14 @@ const getDistanceKm = (lat1, lon1, lat2, lon2) => {
   const dLon = toRad(lon2 - lon1);
   const a =
     Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
 
+// Marker Component
 function DraggableMarker({ coordinates, setCoordinates }) {
   const [position, setPosition] = useState(coordinates);
 
@@ -55,6 +61,19 @@ function DraggableMarker({ coordinates, setCoordinates }) {
 }
 
 function Payment({ cart, setCart, total }) {
+  const navigate = useNavigate();
+
+  // 🔐 LOGIN PROTECTION
+  const requireLogin = () => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      toast.error("Please login first");
+      navigate("/login");
+      return false;
+    }
+    return true;
+  };
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -62,26 +81,31 @@ function Payment({ cart, setCart, total }) {
     address: "",
     HouseNo: "",
     paymentMethod: "Cash on Delivery",
-    utr: "", // added UTR field
+    utr: "",
   });
 
   const [coordinates, setCoordinates] = useState({
     lat: 23.2599,
     lng: 77.4126,
   });
+
   const [deliveryCharge, setDeliveryCharge] = useState(null);
   const [finalTotal, setFinalTotal] = useState(total);
+
   const [sendingOtp, setSendingOtp] = useState(false);
   const [placingOrder] = useState(false);
   const [calculating, setCalculating] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [upiPaid, setUpiPaid] = useState(false);
+
   const [, setManuallyTyped] = useState(false);
 
+  // OTP states
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
 
+  // Delivery charge calculator
   const calculateDeliveryCharge = useCallback(async () => {
     setCalculating(true);
 
@@ -91,8 +115,11 @@ function Payment({ cart, setCart, total }) {
       );
 
       const result = res.data;
+
       if (!result?.address) {
-        toast.error("Unable to determine location. Please reposition the map pin.");
+        toast.error(
+          "Unable to determine location. Please reposition the map pin."
+        );
         return { charge: null };
       }
 
@@ -128,25 +155,23 @@ function Payment({ cart, setCart, total }) {
   }, [coordinates, calculateDeliveryCharge]);
 
   useEffect(() => {
-    if (deliveryCharge !== null) {
-      setFinalTotal(total + deliveryCharge);
-    } else {
-      setFinalTotal(total);
-    }
+    setFinalTotal(deliveryCharge !== null ? total + deliveryCharge : total);
   }, [total, deliveryCharge]);
 
+  // Debounced Geocode
   const debounceRef = React.useRef(null);
-
   const debounceGeocode = (address) => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
     debounceRef.current = setTimeout(() => {
       geocodeAddress(address);
     }, 2000);
   };
 
+  // 🔐 LOGIN CHECK WHEN TYPING ANY FIELD
   const handleChange = (e) => {
+    if (!requireLogin()) return;
+
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
@@ -156,11 +181,21 @@ function Payment({ cart, setCart, total }) {
     }
   };
 
+  // 🔐 SEND OTP WITH LOGIN CHECK
   const sendOtp = async () => {
+    if (!requireLogin()) return;
+
+    if (!formData.email) {
+      return toast.warning("Enter valid email");
+    }
+
+    setSendingOtp(true);
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/otp/send-email-otp`, {
-        email: formData.email,
-      });
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/otp/send-email-otp`,
+        { email: formData.email }
+      );
+
       toast.success("OTP sent to your email");
       setOtpSent(true);
     } catch (err) {
@@ -170,12 +205,16 @@ function Payment({ cart, setCart, total }) {
     }
   };
 
+  // 🔐 VERIFY OTP WITH LOGIN CHECK
   const verifyOtp = async () => {
+    if (!requireLogin()) return;
+
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/otp/verify-email-otp`, {
-        email: formData.email,
-        otp,
-      });
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/otp/verify-email-otp`,
+        { email: formData.email, otp }
+      );
+
       toast.success("Email verified");
       setEmailVerified(true);
     } catch (err) {
@@ -183,33 +222,29 @@ function Payment({ cart, setCart, total }) {
     }
   };
 
+  // 🔐 PLACE ORDER WITH LOGIN CHECK
   const handlePlaceOrder = async () => {
+    if (!requireLogin()) return;
+
     if (!formData.name || !formData.email || !formData.phone || !formData.address) {
-      toast.warning("Please fill in all required fields.");
-      return;
+      return toast.warning("Please fill all fields");
     }
 
     if (!emailVerified) {
-      toast.warning("Please verify your email using OTP.");
-      return;
+      return toast.warning("Verify email first using OTP");
     }
 
-    // 🔐 Secure UPI validation
     if (formData.paymentMethod === "UPI") {
-      if (!upiPaid) {
-        toast.warning("Please confirm you have completed the UPI payment.");
-        return;
-      }
+      if (!upiPaid) return toast.warning("Confirm UPI payment first");
+
       if (!formData.utr || formData.utr.length < 6) {
-        toast.warning("Please enter a valid UPI Transaction ID (UTR).");
-        return;
+        return toast.warning("Enter valid UPI Transaction ID");
       }
     }
 
     const { charge } = await calculateDeliveryCharge();
     if (charge === null) {
-      toast.error("Sorry, delivery is only available within 10 km.");
-      return;
+      return toast.error("Delivery only available within 10 km");
     }
 
     const orderDetails = {
@@ -222,13 +257,17 @@ function Payment({ cart, setCart, total }) {
     };
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/orders`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderDetails),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/api/orders`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderDetails),
+        }
+      );
 
       const data = await res.json();
+
       if (res.ok) {
         setOrderPlaced(true);
         setCart([]);
@@ -242,6 +281,7 @@ function Payment({ cart, setCart, total }) {
     }
   };
 
+  // Geocode Address
   const geocodeAddress = async (address) => {
     try {
       const res = await axios.get(
@@ -249,25 +289,26 @@ function Payment({ cart, setCart, total }) {
           address
         )}`
       );
+
       const data = res.data;
-      if (data && data.length > 0) {
+      if (data?.length > 0) {
         const { lat, lon } = data[0];
         setCoordinates({ lat: parseFloat(lat), lng: parseFloat(lon) });
       } else {
-        toast.error("Address not found. Please refine it or use the map pin.");
+        toast.error("Address not found");
       }
     } catch (error) {
       console.error("Geocoding failed:", error);
-      toast.error("Error while fetching address location.");
+      toast.error("Error fetching address");
     }
   };
 
   if (orderPlaced) {
     return (
-      <div className="bg cream py-5">
+      <div className="bg-cream py-5">
         <div className="container">
           <h2 className="text-success mb-4">Order Placed Successfully!</h2>
-          <p>Thank you for ordering from us. You'll receive a confirmation email shortly.</p>
+          <p>Thank you! You'll receive confirmation soon.</p>
         </div>
       </div>
     );
@@ -278,9 +319,12 @@ function Payment({ cart, setCart, total }) {
       <div className="container mb-5 bg-cream">
         <h2 className="text-golden mb-4">Checkout</h2>
         <div className="row">
+
+          {/* LEFT FORM */}
           <div className="col-md-6">
             <h5 className="mb-3">Delivery Details</h5>
             <form onSubmit={(e) => e.preventDefault()}>
+
               {/* Name */}
               <div className="mb-3">
                 <label className="form-label">Name</label>
@@ -294,7 +338,7 @@ function Payment({ cart, setCart, total }) {
                 />
               </div>
 
-              {/* Email */}
+              {/* Email + OTP */}
               <div className="mb-3">
                 <label className="form-label">Email</label>
                 <input
@@ -313,7 +357,7 @@ function Payment({ cart, setCart, total }) {
                       onClick={sendOtp}
                       disabled={sendingOtp}
                     >
-                      {sendingOtp ? "Sending OTP..." : "Send OTP"}
+                      {sendingOtp ? "Sending..." : "Send OTP"}
                     </button>
 
                     {otpSent && (
@@ -325,7 +369,10 @@ function Payment({ cart, setCart, total }) {
                           value={otp}
                           onChange={(e) => setOtp(e.target.value)}
                         />
-                        <button className="btn btn-sm btn-success mt-2" onClick={verifyOtp}>
+                        <button
+                          className="btn btn-success btn-sm mt-2"
+                          onClick={verifyOtp}
+                        >
                           Verify OTP
                         </button>
                       </>
@@ -333,7 +380,9 @@ function Payment({ cart, setCart, total }) {
                   </>
                 )}
 
-                {emailVerified && <span className="text-success small">Email verified ✅</span>}
+                {emailVerified && (
+                  <div className="text-success small mt-2">Email verified ✅</div>
+                )}
               </div>
 
               {/* Phone */}
@@ -350,7 +399,7 @@ function Payment({ cart, setCart, total }) {
                 />
               </div>
 
-              <h4 className="text-danger text-bold">Address should be within 10km.</h4>
+              <h5 className="text-danger">Address should be within 10 km.</h5>
 
               {/* House No */}
               <div className="mb-3">
@@ -367,19 +416,19 @@ function Payment({ cart, setCart, total }) {
 
               {/* Address */}
               <div className="mb-3">
-                <label className="form-label">Address (auto-filled from map)</label>
+                <label className="form-label">Address (auto-filled)</label>
                 <textarea
                   className="form-control"
                   name="address"
+                  rows="3"
                   value={formData.address}
                   onChange={handleChange}
-                  rows="3"
                 />
               </div>
 
               {/* Map */}
               <div className="mb-3">
-                <label className="form-label">Pin Your Exact Location</label>
+                <label className="form-label">Pin Location</label>
                 <MapContainer
                   center={[coordinates.lat, coordinates.lng]}
                   zoom={13}
@@ -387,10 +436,13 @@ function Payment({ cart, setCart, total }) {
                   style={{ height: "300px", width: "100%" }}
                 >
                   <TileLayer
-                    attribution="&copy; OpenStreetMap contributors"
+                    attribution="© OpenStreetMap contributors"
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                  <DraggableMarker coordinates={coordinates} setCoordinates={setCoordinates} />
+                  <DraggableMarker
+                    coordinates={coordinates}
+                    setCoordinates={setCoordinates}
+                  />
                 </MapContainer>
               </div>
 
@@ -408,7 +460,7 @@ function Payment({ cart, setCart, total }) {
                 </select>
               </div>
 
-              {/* UPI Section (Improved + Safe) */}
+              {/* UPI SECTION */}
               {formData.paymentMethod === "UPI" && (
                 <div className="mt-3 p-3 border rounded bg-light">
                   <h6>Scan to Pay ₹{finalTotal}</h6>
@@ -418,22 +470,24 @@ function Payment({ cart, setCart, total }) {
                     size={150}
                   />
 
-                  <p className="small mt-2 mb-0">
+                  <p className="small mt-2 mb-1">
                     UPI ID: <strong>9753600206@ybl</strong>
                   </p>
 
-                  <div className="mt-3">
-                    <label className="form-label fw-bold">Enter UPI Transaction ID (UTR)</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="e.g., 324519876543"
-                      value={formData.utr}
-                      onChange={(e) => setFormData({ ...formData, utr: e.target.value })}
-                      required
-                    />
-                  </div>
+                  {/* UTR */}
+                  <label className="form-label fw-bold">Enter UTR</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="UPI transaction ID"
+                    value={formData.utr}
+                    onChange={(e) =>
+                      setFormData({ ...formData, utr: e.target.value })
+                    }
+                    required
+                  />
 
+                  {/* Paid checkbox */}
                   <div className="form-check mt-3">
                     <input
                       className="form-check-input"
@@ -451,26 +505,22 @@ function Payment({ cart, setCart, total }) {
             </form>
           </div>
 
-          {/* Right side order summary */}
+          {/* RIGHT COLUMN */}
           <div className="col-md-6">
             <h5 className="mb-3">Order Summary</h5>
+
             <ul className="list-group mb-3">
               {cart.map((item, idx) => (
-                <li
-                  key={idx}
-                  className="list-group-item d-flex justify-content-between align-items-center"
-                >
+                <li key={idx} className="list-group-item d-flex justify-content-between">
                   {item.name} {item.variant ? `(${item.variant})` : ""} - ₹{item.price}
                 </li>
               ))}
             </ul>
 
             <p className="fw-bold">Items Total: ₹{total}</p>
-
             {deliveryCharge !== null && (
               <p className="fw-bold">Delivery Charge: ₹{deliveryCharge}</p>
             )}
-
             <p className="fw-bold">Final Total: ₹{finalTotal}</p>
 
             <button

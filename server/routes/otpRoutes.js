@@ -18,6 +18,7 @@ router.post("/send-email-otp", async (req, res) => {
     return res.status(400).json({ message: "Email is required" });
 
   const otp = generateOTP();
+  console.log("FROM ENV:", process.env.RESEND_FROM_EMAIL);
   console.log("Sending OTP to:", email);
 
   try {
@@ -39,6 +40,7 @@ router.post("/send-email-otp", async (req, res) => {
     });
 
     console.log("Email response:", data);
+
 
     res.json({
       success: true,
