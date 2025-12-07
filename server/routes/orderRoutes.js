@@ -2,17 +2,13 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const Order = require("../models/Order");
-const auth = require("../middleware/auth");       // 🔥 protect orders route
+const auth = require("../middleware/auth");
 const { Resend } = require("resend");
-
-// ⚠️ A better approach: Import Dish model and fetch prices from DB
-// const Dish = require("../models/Dish");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const RESTAURANT_COORDS = { lat: 23.33880, lng: 76.83752 };
 
-// Calculate distance
 function toRad(deg) {
   return deg * Math.PI / 180;
 }
@@ -28,8 +24,6 @@ function getDistanceKm(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-
-// PLACE ORDER (Protected)
 router.post("/", auth, async (req, res) => {
   try {
     const { name, email, phone, address, paymentMethod, items, location, utr } = req.body;
@@ -42,10 +36,8 @@ router.post("/", auth, async (req, res) => {
       return res.status(400).json({ message: "Location required" });
     }
 
-    // 🔥 Recalculate itemTotal securely
     const itemTotal = items.reduce((sum, i) => sum + Number(i.price || 0), 0);
 
-    // 🔥 Recalculate deliveryCharge securely
     const distance = getDistanceKm(
       RESTAURANT_COORDS.lat,
       RESTAURANT_COORDS.lng,
@@ -59,7 +51,6 @@ router.post("/", auth, async (req, res) => {
     else if (distance <= 10) deliveryCharge = 50;
     else return res.status(400).json({ message: "Delivery 10km only." });
 
-    // 🔥 Secure handling for UPI
     let paymentStatus = "COD_PENDING";
     if (paymentMethod === "UPI") {
       if (!utr || utr.length < 6) {
@@ -68,9 +59,8 @@ router.post("/", auth, async (req, res) => {
       paymentStatus = "UPI_PENDING_VERIFICATION";
     }
 
-    const finalTotal = itemTotal + deliveryCharge;   // 🔥 secure total
+    const finalTotal = itemTotal + deliveryCharge;
 
-    // Save Order
     const order = await Order.create({
       userId: req.user.id,
       name,
@@ -91,7 +81,7 @@ router.post("/", auth, async (req, res) => {
     return res.status(201).json({
       message: "Order placed successfully",
       orderId: order._id,
-      total: finalTotal, // respond with secure total
+      total: finalTotal,
     });
 
   } catch (err) {
@@ -99,3 +89,5 @@ router.post("/", auth, async (req, res) => {
     res.status(500).json({ message: "Server error creating order" });
   }
 });
+
+module.exports = router;  
