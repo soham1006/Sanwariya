@@ -1,28 +1,33 @@
-import React, { useState } from 'react';
-import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link as ScrollLink } from "react-scroll";
+import {
+  Link as RouterLink,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
 function Navbar() {
   const navigate = useNavigate();
-  const location = useLocation();   // <-- important
-  const [active, setActive] = useState('hero');
+  const location = useLocation();
+  const [active, setActive] = useState("hero");
 
-  const isHome = location.pathname === "/";  // <-- detect if we are on Home
+  const isHome = location.pathname === "/";
 
-  const handleNavClick = (section) => {
-    setActive(section);
-    setTimeout(() => {
-      const navbarCollapse = document.querySelector('.navbar-collapse');
-      if (navbarCollapse && navbarCollapse.classList.contains('show')) {
-        navbarCollapse.classList.remove('show');
-      }
-    }, 300);
+  const token =
+    localStorage.getItem("userToken") || localStorage.getItem("token");
+
+  const closeNavbar = () => {
+    const navbarCollapse = document.querySelector(".navbar-collapse");
+    if (navbarCollapse?.classList.contains("show")) {
+      navbarCollapse.classList.remove("show");
+    }
   };
-
-  const token = localStorage.getItem("userToken");
 
   const handleLogout = () => {
     localStorage.removeItem("userToken");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    closeNavbar();
     navigate("/login");
   };
 
@@ -30,7 +35,7 @@ function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow fixed-top">
       <div className="container">
 
-        {/* BRAND LOGO */}
+        {/* BRAND */}
         <RouterLink to="/" className="navbar-brand fw-bold">
           Shri Sanwariya
         </RouterLink>
@@ -42,94 +47,245 @@ function Navbar() {
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
         >
-          <span className="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon" />
         </button>
 
         <div className="collapse navbar-collapse" id="navbarNav">
 
           {/* CENTER NAV */}
-          <ul className="navbar-nav gap-3 mx-auto">
+          <ul className="navbar-nav mx-auto gap-3">
 
-            {[ 
-              { to: 'hero', label: 'Home' },
-              { to: 'about', label: 'About' },
-              { to: 'rooms', label: 'Rooms' },
-              { to: 'menu', label: 'Menu' },
-              { to: 'bookings', label: 'Bookings' },
-              { to: 'contact', label: 'Contact' }
-            ].map((item, idx) => (
-              <li className="nav-item" key={idx}>
+            {/* HOME */}
+            <li className="nav-item">
+              {isHome ? (
+                <ScrollLink
+                  to="hero"
+                  smooth
+                  duration={500}
+                  offset={-70}
+                  spy
+                  onSetActive={() => setActive("hero")}
+                  onClick={closeNavbar}
+                  className={`nav-link text-uppercase fw-semibold ${
+                    active === "hero" ? "active-link" : ""
+                  }`}
+                  style={{ cursor: "pointer" }}
+                >
+                  Home
+                </ScrollLink>
+              ) : (
+                <RouterLink
+                  to="/"
+                  onClick={closeNavbar}
+                  className="nav-link text-uppercase fw-semibold"
+                >
+                  Home
+                </RouterLink>
+              )}
+            </li>
 
-                {isHome ? (
-                  // ✔ Scroll inside Home
-                  <ScrollLink
-                    to={item.to}
-                    smooth={true}
-                    duration={500}
-                    offset={-70}
-                    spy={true}
-                    onSetActive={() => setActive(item.to)}
-                    onClick={() => handleNavClick(item.to)}
-                    className={`nav-link text-uppercase fw-semibold ${active === item.to ? 'active-link' : ''}`}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {item.label}
-                  </ScrollLink>
-                ) : (
-                  // ❌ If not on Home: route back to Home first
-                  <RouterLink
-                    to="/"
-                    className="nav-link text-uppercase fw-semibold"
-                  >
-                    {item.label}
-                  </RouterLink>
-                )}
+            {/* ABOUT */}
+            <li className="nav-item">
+              {isHome ? (
+                <ScrollLink
+                  to="about"
+                  smooth
+                  duration={500}
+                  offset={-70}
+                  spy
+                  onSetActive={() => setActive("about")}
+                  onClick={closeNavbar}
+                  className={`nav-link text-uppercase fw-semibold ${
+                    active === "about" ? "active-link" : ""
+                  }`}
+                  style={{ cursor: "pointer" }}
+                >
+                  About
+                </ScrollLink>
+              ) : (
+                <RouterLink
+                  to="/"
+                  onClick={closeNavbar}
+                  className="nav-link text-uppercase fw-semibold"
+                >
+                  About
+                </RouterLink>
+              )}
+            </li>
 
-              </li>
-            ))}
+            {/* ROOMS */}
+            <li className="nav-item">
+              {isHome ? (
+                <ScrollLink
+                  to="rooms"
+                  smooth
+                  duration={500}
+                  offset={-70}
+                  spy
+                  onSetActive={() => setActive("rooms")}
+                  onClick={closeNavbar}
+                  className={`nav-link text-uppercase fw-semibold ${
+                    active === "rooms" ? "active-link" : ""
+                  }`}
+                  style={{ cursor: "pointer" }}
+                >
+                  Rooms
+                </ScrollLink>
+              ) : (
+                <RouterLink
+                  to="/"
+                  onClick={closeNavbar}
+                  className="nav-link text-uppercase fw-semibold"
+                >
+                  Rooms
+                </RouterLink>
+              )}
+            </li>
+
+            {/* MENU */}
+            <li className="nav-item">
+              {isHome ? (
+                <ScrollLink
+                  to="menu"
+                  smooth
+                  duration={500}
+                  offset={-70}
+                  spy
+                  onSetActive={() => setActive("menu")}
+                  onClick={closeNavbar}
+                  className={`nav-link text-uppercase fw-semibold ${
+                    active === "menu" ? "active-link" : ""
+                  }`}
+                  style={{ cursor: "pointer" }}
+                >
+                  Menu
+                </ScrollLink>
+              ) : (
+                <RouterLink
+                  to="/"
+                  onClick={closeNavbar}
+                  className="nav-link text-uppercase fw-semibold"
+                >
+                  Menu
+                </RouterLink>
+              )}
+            </li>
+{/* GALLERY */}
+<li className="nav-item">
+  {isHome ? (
+    <ScrollLink
+      to="gallery"
+      smooth
+      duration={500}
+      offset={-70}
+      spy
+      onSetActive={() => setActive("gallery")}
+      onClick={closeNavbar}
+      className={`nav-link text-uppercase fw-semibold ${
+        active === "gallery" ? "active-link" : ""
+      }`}
+      style={{ cursor: "pointer" }}
+    >
+      Gallery
+    </ScrollLink>
+  ) : (
+    <RouterLink
+      to="/"
+      onClick={closeNavbar}
+      className="nav-link text-uppercase fw-semibold"
+    >
+      Gallery
+    </RouterLink>
+  )}
+</li>
+
+
+            {/* BOOKINGS */}
+            <li className="nav-item">
+              {isHome ? (
+                <ScrollLink
+                  to="bookings"
+                  smooth
+                  duration={500}
+                  offset={-70}
+                  spy
+                  onSetActive={() => setActive("bookings")}
+                  onClick={closeNavbar}
+                  className={`nav-link text-uppercase fw-semibold ${
+                    active === "bookings" ? "active-link" : ""
+                  }`}
+                  style={{ cursor: "pointer" }}
+                >
+                  Bookings
+                </ScrollLink>
+              ) : (
+                <RouterLink
+                  to="/"
+                  onClick={closeNavbar}
+                  className="nav-link text-uppercase fw-semibold"
+                >
+                  Bookings
+                </RouterLink>
+              )}
+            </li>
+
+            {/* CONTACT */}
+            <li className="nav-item">
+              {isHome ? (
+                <ScrollLink
+                  to="contact"
+                  smooth
+                  duration={500}
+                  offset={-70}
+                  spy
+                  onSetActive={() => setActive("contact")}
+                  onClick={closeNavbar}
+                  className={`nav-link text-uppercase fw-semibold ${
+                    active === "contact" ? "active-link" : ""
+                  }`}
+                  style={{ cursor: "pointer" }}
+                >
+                  Contact
+                </ScrollLink>
+              ) : (
+                <RouterLink
+                  to="/"
+                  onClick={closeNavbar}
+                  className="nav-link text-uppercase fw-semibold"
+                >
+                  Contact
+                </RouterLink>
+              )}
+            </li>
 
           </ul>
 
-          {/* RIGHT SIDE AUTH */}
+          {/* RIGHT AUTH */}
           <ul className="navbar-nav ms-auto gap-3">
-
-            {!token && (
+            {!token ? (
               <>
                 <li className="nav-item">
-                  <RouterLink
-                    to="/login"
-                    onClick={() => handleNavClick("register")}
-                    className="nav-link text-uppercase fw-semibold"
-                  >
+                  <RouterLink to="/login" onClick={closeNavbar} className="nav-link">
                     Login
                   </RouterLink>
                 </li>
-
                 <li className="nav-item">
-                  <RouterLink
-                    to="/register"
-                    onClick={() => handleNavClick("register")}
-                    className="nav-link text-uppercase fw-semibold"
-                  >
+                  <RouterLink to="/register" onClick={closeNavbar} className="nav-link">
                     Register
                   </RouterLink>
                 </li>
               </>
-            )}
-
-            {token && (
+            ) : (
               <li className="nav-item">
-                <RouterLink
-                  to="#"
+                <span
                   onClick={handleLogout}
-                  className="nav-link text-uppercase fw-semibold"
+                  className="nav-link"
                   style={{ cursor: "pointer" }}
                 >
                   Logout
-                </RouterLink>
+                </span>
               </li>
             )}
-
           </ul>
 
         </div>

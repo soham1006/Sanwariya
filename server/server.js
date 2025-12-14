@@ -41,6 +41,8 @@ const orderRoutes = require('./routes/orderRoutes');
 const otpRoutes = require('./routes/otpRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require("./routes/auth");
+const GalleryRoute = require("./routes/GalleryRoute");
+
 
 app.use("/api/auth", authRoutes);
 app.use('/api/bookings', bookingRoute);
@@ -52,6 +54,7 @@ app.use('/api/meal-bookings', mealBookingRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/otp', otpRoutes);
 app.use('/api/admin', adminRoutes);
+app.use("/api/gallery", GalleryRoute);
 
 // Test route
 app.get('/', (req, res) => {

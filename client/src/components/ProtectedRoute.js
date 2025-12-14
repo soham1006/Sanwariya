@@ -1,10 +1,17 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const isAdmin = localStorage.getItem('isAdmin') === 'true';
+  // OLD (existing)
+  const isAdminFlag = localStorage.getItem("isAdmin") === "true";
 
-  return isAdmin ? children : <Navigate to="/admin-login" replace />;
+  // NEW (future-proof)
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isAdminRole = token && user?.role === "admin";
+
+  return isAdminFlag || isAdminRole
+    ? children
+    : <Navigate to="/admin-login" replace />;
 };
 
 export default ProtectedRoute;

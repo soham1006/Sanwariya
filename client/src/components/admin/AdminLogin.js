@@ -23,7 +23,7 @@ function AdminLogin() {
 
     if (data.success) {
       localStorage.setItem('isAdmin', 'true');
-      navigate('/admin');
+      navigate('/admin/dashboard');
     } else {
       alert(data.message || 'Login failed');
     }

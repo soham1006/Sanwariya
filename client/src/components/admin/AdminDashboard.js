@@ -8,6 +8,7 @@ import {
   FaBed,
   FaUtensils,
   FaCalendarAlt,
+  FaImages,        
 } from "react-icons/fa";
 
 import "./AdminDashboard.css";
@@ -16,7 +17,7 @@ const AdminDashboard = () => {
   return (
     <div className="admindash-container">
 
-      <h1 className="admindash-title">Welcome, Arjun Singh Mewada </h1>
+      <h1 className="admindash-title">Welcome, Arjun Singh Mewada</h1>
       <p className="admindash-subtitle">Manage everything from one place</p>
 
       <div className="admindash-grid">
@@ -29,6 +30,11 @@ const AdminDashboard = () => {
         <Link to="/admin/manage-dishes" className="admindash-card">
           <FaList className="icon" />
           <h3>All Dishes</h3>
+        </Link>
+
+        <Link to="/admin/gallery" className="admindash-card">
+          <FaImages className="icon" />
+          <h3>Gallery</h3>
         </Link>
 
         <Link to="/admin/orders" className="admindash-card">

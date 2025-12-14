@@ -1,50 +1,102 @@
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+import { useEffect, useState } from "react";
 
-import { Navigation, Pagination } from 'swiper/modules';
+const Gallery = () => {
+  const [images, setImages] = useState([]);
+  const [hovered, setHovered] = useState(null);
 
-const galleryImages = [
-  '/images/gallery/img1.jpg',
-  '/images/gallery/img2.jpg',
-  '/images/gallery/img3.jpg',
-  '/images/gallery/img4.jpg',
-  '/images/gallery/img5.jpg',
-  '/images/gallery/img6.jpg',
-  '/images/gallery/img7.jpg'
-];
+  useEffect(() => {
+    fetch("/api/gallery")
+      .then(res => res.json())
+      .then(setImages);
+  }, []);
 
-function Gallery() {
+  const categories = [
+    { key: "rooms", label: "Rooms" },
+    { key: "restaurant", label: "Restaurant" },
+    { key: "hall", label: "Banquet / Hall" },
+  ];
+
   return (
-    <section id="gallery" className="py-5 bg-light">
+    <section
+      id="gallery"
+      className="py-5"
+      style={{ backgroundColor: "#fffaf2" }}
+    >
       <div className="container">
-        <h2 className="text-center section-title mb-4 text-golden">Our Gallery</h2>
-        <Swiper
-          modules={[Navigation, Pagination]}
-          spaceBetween={20}
-          slidesPerView={3}
-          navigation
-          pagination={{ clickable: true }}
-          breakpoints={{
-            320: { slidesPerView: 1 },
-            576: { slidesPerView: 2 },
-            768: { slidesPerView: 3 },
-            992: { slidesPerView: 4 }
-          }}
-        >
-          {galleryImages.map((src, index) => (
-            <SwiperSlide key={index}>
-              <div className="gallery-image-wrapper">
-                <img src={src} alt={`Gallery ${index + 1}`} className="img-fluid rounded shadow" />
+
+        {/* TITLE */}
+        <h2 className="text-center mb-5 fw-semibold" style={{ color: "#c9a227" }}>
+          Our Gallery
+        </h2>
+
+        {/* NO IMAGES */}
+        {images.length === 0 && (
+          <p className="text-center text-muted">
+            Gallery images will be available soon.
+          </p>
+        )}
+
+        {categories.map(cat => {
+          const catImages = images.filter(
+            img => img.category === cat.key
+          );
+
+          if (catImages.length === 0) return null;
+
+          return (
+            <div key={cat.key} className="mb-5">
+
+              {/* CATEGORY TITLE */}
+              <h4
+                className="mb-4 fw-semibold"
+                style={{ color: "#c9a227" }}
+              >
+                {cat.label}
+              </h4>
+
+              {/* IMAGES */}
+              <div className="row g-4 justify-content-center">
+                {catImages.map(img => (
+                  <div
+                    key={img._id}
+                    className="col-sm-6 col-md-4 col-lg-3"
+                  >
+                    <div
+                      className={`card border-0 rounded overflow-hidden h-100 ${
+                        hovered === img._id ? "shadow-lg" : "shadow"
+                      }`}
+                      style={{
+                        cursor: "pointer",
+                        transition: "all 0.3s ease",
+                        transform:
+                          hovered === img._id
+                            ? "translateY(-6px)"
+                            : "none",
+                      }}
+                      onMouseEnter={() => setHovered(img._id)}
+                      onMouseLeave={() => setHovered(null)}
+                    >
+                      <img
+                        src={img.url}
+                        alt={cat.label}
+                        className="card-img-top"
+                        style={{
+                          height: "220px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+
+            </div>
+          );
+        })}
+
       </div>
     </section>
   );
-}
+};
 
 export default Gallery;

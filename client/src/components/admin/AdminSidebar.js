@@ -59,6 +59,12 @@ const AdminSidebar = () => {
               {!collapsed && "All Dishes"}
             </NavLink>
           </li>
+          <li>
+  <NavLink to="/admin/gallery">
+    <i className="fa fa-image"></i>
+    Gallery
+  </NavLink>
+</li>
 
           <li>
             <NavLink to="/admin/orders">

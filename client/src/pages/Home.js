@@ -4,6 +4,7 @@ import About from '../sections/About';
 import Rooms from '../sections/Rooms';
 import Menu from '../sections/Menu';
 import Bookings from '../sections/Bookings';
+import Gallery from '../sections/Gallery';
 import Contact from '../sections/Contact';
 
 function Home() {
@@ -13,6 +14,7 @@ function Home() {
       <About />
       <Rooms />
       <Menu />
+      <Gallery/>
       <Bookings />
       <Contact />
     </>

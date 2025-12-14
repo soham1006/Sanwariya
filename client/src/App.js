@@ -1,5 +1,11 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 // ADMIN PAGES
@@ -12,37 +18,39 @@ import AdminMealBookings from "./components/admin/AdminMealBookings";
 import AddDish from "./components/admin/AddDish";
 import ManageDishes from "./components/admin/ManageDishes";
 import AdminContactMessages from "./components/admin/AdminContactMessages";
-
+import AdminGallery from "./components/admin/AdminGallery";
 
 // USER PAGES
 import Home from "./pages/Home";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Gallery from "./sections/Gallery";
 
-// SECTIONS
+// SECTIONS / LAYOUT
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Bookings from "./sections/Bookings";
 import Payment from "./sections/Payment";
 
 import "./App.css";
-// ------------ ADMIN PROTECT -------------
+
+/* ---------------- ADMIN PROTECTED ---------------- */
 const AdminProtectedRoute = ({ children }) => {
   const isAdmin = localStorage.getItem("isAdmin") === "true";
   return isAdmin ? children : <Navigate to="/admin-login" replace />;
 };
 
-// ------------ USER PROTECT -------------
+/* ---------------- USER PROTECTED ---------------- */
 const UserProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("userToken");
   return token ? children : <Navigate to="/login" replace />;
 };
 
-// ------------ MAIN APP WRAPPER -------------
+/* ---------------- APP WRAPPER ---------------- */
 function AppWrapper() {
   const location = useLocation();
 
-  // Hide navbar & footer on admin pages, but show for admin-login
+  // Hide navbar & footer on admin pages (except admin-login)
   const hideLayout =
     location.pathname.startsWith("/admin") &&
     location.pathname !== "/admin-login";
@@ -53,13 +61,13 @@ function AppWrapper() {
       <ToastContainer />
 
       <Routes>
-
-        {/* Public Routes */}
+        {/* ---------- PUBLIC ROUTES ---------- */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/gallery" element={<Gallery />} />
 
-        {/* USER Protected */}
+        {/* ---------- USER PROTECTED ---------- */}
         <Route
           path="/booking"
           element={
@@ -78,8 +86,8 @@ function AppWrapper() {
           }
         />
 
-        {/* ADMIN Protected */}
-         <Route
+        {/* ---------- ADMIN ROUTES ---------- */}
+        <Route
           path="/admin/dashboard"
           element={
             <AdminProtectedRoute>
@@ -87,6 +95,16 @@ function AppWrapper() {
             </AdminProtectedRoute>
           }
         />
+
+        <Route
+          path="/admin/gallery"
+          element={
+            <AdminProtectedRoute>
+              <AdminGallery />
+            </AdminProtectedRoute>
+          }
+        />
+
         <Route
           path="/admin/add-dish"
           element={
@@ -141,15 +159,16 @@ function AppWrapper() {
           }
         />
 
-         <Route
+        <Route
           path="/admin/messages"
           element={
             <AdminProtectedRoute>
-              < AdminContactMessages/>
+              <AdminContactMessages />
             </AdminProtectedRoute>
           }
         />
 
+        {/* ---------- ADMIN LOGIN ---------- */}
         <Route path="/admin-login" element={<AdminLogin />} />
       </Routes>
 
@@ -158,6 +177,7 @@ function AppWrapper() {
   );
 }
 
+/* ---------------- MAIN APP ---------------- */
 function App() {
   return (
     <Router>

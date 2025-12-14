@@ -16,3 +16,10 @@ module.exports = function (req, res, next) {
     return res.status(401).json({ message: "Unauthorized: Invalid token" });
   }
 };
+
+const adminOnly = (req, res, next) => {
+  if (req.user.role !== "admin")
+    return res.status(403).json({ msg: "Access denied" });
+
+  next();
+};
