@@ -49,7 +49,7 @@ function ManageDishes() {
       formDataImage.append("oldPublicId", formData.publicId);
 
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/upload`, {
+        const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/images/upload`, {
           method: "POST",
           body: formDataImage,
         });

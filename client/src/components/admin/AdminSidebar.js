@@ -61,10 +61,10 @@ const AdminSidebar = () => {
           </li>
           <li>
   <NavLink to="/admin/gallery">
-    <i className="fa fa-image"></i>
-    Gallery
+    📷 {!collapsed && "Gallery"}
   </NavLink>
 </li>
+
 
           <li>
             <NavLink to="/admin/orders">

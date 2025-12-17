@@ -1,192 +1,140 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import AdminLayout from "./AdminLayout";
 
-const AdminGallery = () => {
-  const [image, setImage] = useState(null);
+const AddGalleryImage = () => {
   const [category, setCategory] = useState("");
-  const [gallery, setGallery] = useState([]);
-  const [preview, setPreview] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  const token = localStorage.getItem("token");
-
-  const fetchGallery = async () => {
-    const res = await axios.get("http://localhost:5000/api/gallery");
-    setGallery(res.data);
-  };
-
-  useEffect(() => {
-    fetchGallery();
-  }, []);
+  const [image, setImage] = useState("");
+  const [preview, setPreview] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const handleUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  setUploading(true);
+  setPreview(URL.createObjectURL(file));
+
+  const formData = new FormData();
+  formData.append("galleryImage", file);
+
+  try {
+    const res = await fetch(
+      "http://localhost:5000/api/gallery/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) throw new Error();
+
+    const data = await res.json();
+    setImage(data.imageUrl);
+  } catch (err) {
+    alert("Gallery image upload failed");
+  } finally {
+    setUploading(false);
+  }
+};
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!image || !category) {
-      alert("Please select category and image");
+    if (!category || !image) {
+      alert("Category & image required");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("image", image);
-    formData.append("category", category);
-
     try {
-      setLoading(true);
+      const token = localStorage.getItem("token");
 
-      await axios.post(
-        "http://localhost:5000/api/gallery/upload",
-        formData,
+      const res = await fetch(
+        "http://localhost:5000/api/gallery",
         {
+          method: "POST",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({
+            category,
+            imageUrl: image,
+          }),
         }
       );
 
-      // reset states
-      setImage(null);
-      setCategory("");
-      setPreview(null);
+      if (!res.ok) throw new Error();
 
-      fetchGallery();
+      setCategory("");
+      setImage("");
+      setPreview("");
+      alert("Gallery image added");
     } catch (err) {
-      alert("Image upload failed");
-    } finally {
-      setLoading(false);
+      console.error("Save failed:", err);
+      alert("Failed to save gallery image");
     }
   };
 
-  const deleteImage = async (id) => {
-    if (!window.confirm("Delete this image?")) return;
-
-    await axios.delete(`http://localhost:5000/api/gallery/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    fetchGallery();
-  };
-
-  // cleanup preview URL
-  useEffect(() => {
-    return () => {
-      if (preview) URL.revokeObjectURL(preview);
-    };
-  }, [preview]);
+  const categories = ["Hall", "Restaurant", "Rooms"];
 
   return (
     <AdminLayout>
-      <div className="container-fluid px-4 py-4">
+      <div className="container mt-5 my-5">
+        <h3 className="text-gold elegant-title mb-4">Add Gallery Image</h3>
 
-        {/* PAGE TITLE */}
-        <h2 className="fw-bold mb-4" style={{ color: "#d4a017" }}>
-          Add Gallery Image
-        </h2>
-
-        {/* UPLOAD CARD */}
-        <div className="card shadow-sm border-0 rounded-4 mb-5">
-          <div className="card-body p-4">
-
-            <form onSubmit={handleUpload}>
-              <div className="row g-4 align-items-end">
-
-                <div className="col-md-4">
-                  <label className="form-label fw-semibold">
-                    Category
-                  </label>
-                  <select
-                    className="form-select"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  >
-                    <option value="">Select Category</option>
-                    <option value="rooms">Rooms</option>
-                    <option value="restaurant">Restaurant</option>
-                    <option value="hall">Banquet / Hall</option>
-                  </select>
-                </div>
-
-                <div className="col-md-5">
-                  <label className="form-label fw-semibold">
-                    Gallery Image
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (!file) return;
-                      setImage(file);
-                      setPreview(URL.createObjectURL(file));
-                    }}
-                  />
-
-                  {preview && (
-                    <img
-                      src={preview}
-                      alt="preview"
-                      className="img-fluid rounded mt-3 border"
-                      style={{ maxHeight: "160px" }}
-                    />
-                  )}
-                </div>
-
-                <div className="col-md-3 text-end">
-                  <button
-                    type="submit"
-                    className="btn btn-warning px-4 fw-semibold"
-                    disabled={loading}
-                  >
-                    {loading ? "Uploading..." : "Upload Image"}
-                  </button>
-                </div>
-
-              </div>
-            </form>
-
-          </div>
-        </div>
-
-        {/* UPLOADED IMAGES */}
-        <h4 className="fw-semibold mb-3">Uploaded Images</h4>
-
-        <div className="row g-4">
-          {gallery.length === 0 && (
-            <p className="text-muted">No images uploaded yet.</p>
-          )}
-
-          {gallery.map((img) => (
-            <div key={img._id} className="col-sm-6 col-md-4 col-lg-3">
-              <div className="card shadow-sm border-0 h-100 rounded-4">
-                <img
-                  src={img.url}
-                  alt="gallery"
-                  className="card-img-top rounded-top-4"
-                  style={{ height: "180px", objectFit: "cover" }}
-                />
-                <div className="card-body d-flex justify-content-between align-items-center">
-                  <span className="badge bg-dark text-capitalize">
-                    {img.category}
-                  </span>
-                  <button
-                    className="btn btn-sm btn-outline-danger"
-                    onClick={() => deleteImage(img._id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className="row g-3 align-items-end">
+            <div className="col-md-4">
+              <label className="form-label">Category</label>
+              <select
+                className="form-select"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
             </div>
-          ))}
-        </div>
 
+            <div className="col-md-4">
+              <label className="form-label">Gallery Image</label>
+              <input
+                type="file"
+                className="form-control"
+                accept="image/*"
+                onChange={handleUpload}
+                required
+              />
+            </div>
+          </div>
+
+          {preview && (
+            <div className="text-center mt-4">
+              <img
+                src={preview}
+                alt="Preview"
+                style={{ maxWidth: "200px", borderRadius: "10px" }}
+              />
+            </div>
+          )}
+<div className="text-center mt-4">
+         <button
+  type="submit"
+  disabled={!image || uploading}
+  className="btn btn-outline-warning btn-lg px-4 py-2 rounded-pill"
+>
+  {uploading ? "Uploading..." : "Save Image"}
+</button>
+</div>
+        </form>
       </div>
     </AdminLayout>
   );
 };
 
-export default AdminGallery;
+export default AddGalleryImage;
