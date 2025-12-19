@@ -59,11 +59,14 @@ const AdminSidebar = () => {
               {!collapsed && "All Dishes"}
             </NavLink>
           </li>
-          <li>
+       <li>
   <NavLink to="/admin/gallery">
-    📷 {!collapsed && "Gallery"}
+    <i className="bi bi-images"></i>
+    {!collapsed && "Gallery"}
   </NavLink>
 </li>
+
+
 
 
           <li>

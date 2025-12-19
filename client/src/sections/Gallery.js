@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 const Gallery = () => {
   const [images, setImages] = useState([]);
+  const [verticalMap, setVerticalMap] = useState({});
 
   useEffect(() => {
     fetch("http://localhost:5000/api/gallery")
@@ -10,7 +11,31 @@ const Gallery = () => {
       .catch(() => {});
   }, []);
 
+  const detectOrientation = (url, id) => {
+    if (verticalMap[id] !== undefined) return;
+
+    const img = new Image();
+    img.src = url;
+    img.onload = () => {
+      setVerticalMap((prev) => ({
+        ...prev,
+        [id]: img.height > img.width,
+      }));
+    };
+  };
+
   const categories = [
+    {
+      key: "Exterior",
+      label: "Hotel Exterior",
+      description:
+        "Prime location with easy access, parking, and a well-maintained building.",
+      points: [
+        "Centrally located",
+        "Easy parking access",
+        "Lift & multiple floors",
+      ],
+    },
     {
       key: "Rooms",
       label: "Rooms",
@@ -49,38 +74,32 @@ const Gallery = () => {
   return (
     <section className="py-5" style={{ backgroundColor: "#fffaf2" }}>
       <div className="container">
-
-        {/* TITLE */}
         <h2 className="text-center mb-5 fw-semibold text-golden elegant-title">
           Our Gallery
         </h2>
 
-        {/* CATEGORIES */}
         {categories.map((cat, index) => {
           const catImages = images.filter(
             (img) => img.category === cat.key
           );
-
           if (catImages.length === 0) return null;
 
           const reverse = index % 2 !== 0;
 
           return (
             <div key={cat.key} className="mb-5 pb-4 border-bottom">
-
               <div
                 className={`row align-items-center ${
                   reverse ? "flex-row-reverse" : ""
                 }`}
               >
-
                 {/* TEXT */}
                 <div className="col-12 col-lg-4 mb-4 mb-lg-0">
                   <h4 className="fw-semibold text-golden elegant-title mb-3">
                     {cat.label}
                   </h4>
 
-                  <p className="text-muted mb-3">
+                  <p className="text-muted mb-4" style={{ lineHeight: "1.8" }}>
                     {cat.description}
                   </p>
 
@@ -96,29 +115,42 @@ const Gallery = () => {
                 {/* IMAGES */}
                 <div className="col-12 col-lg-8">
                   <div className="row g-4">
-                    {catImages.slice(0, 4).map((img) => (
-                      <div key={img._id} className="col-12 col-sm-6">
-                        <div className="card border-0 shadow-sm rounded-4 overflow-hidden">
-                          <img
-                            src={img.url}
-                            alt={cat.label}
-                            className="img-fluid"
+                    {catImages.slice(0, 4).map((img) => {
+                      detectOrientation(img.url, img._id);
+                      const isVertical = verticalMap[img._id];
+
+                      return (
+                        <div key={img._id} className="col-12 col-sm-6">
+                          <div
+                            className="rounded-4 shadow-sm d-flex justify-content-center align-items-center"
                             style={{
-                              height: "220px",
-                              objectFit: "cover",
+                              height: isVertical ? "420px" : "220px",
+                              padding: isVertical ? "12px" : "0",
+                              overflow: "hidden",
                             }}
-                          />
+                          >
+                            <img
+                              src={img.url}
+                              alt={cat.label}
+                              style={{
+                                height: "100%",
+                                width: isVertical ? "auto" : "100%",
+                                objectFit: isVertical
+                                  ? "contain"
+                                  : "cover",
+                                borderRadius: "14px",
+                              }}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
-
               </div>
             </div>
           );
         })}
-
       </div>
     </section>
   );

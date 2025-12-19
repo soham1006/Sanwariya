@@ -5,7 +5,7 @@ const GallerySchema = new mongoose.Schema(
     url: { type: String, required: true },
     category: {
       type: String,
-      enum: ["Hall", "Restaurant", "Rooms"],
+      enum: ["Exterior","Hall", "Restaurant", "Rooms"],
       required: true,
     },
   },

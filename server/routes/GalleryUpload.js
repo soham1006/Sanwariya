@@ -66,5 +66,28 @@ router.post("/", async (req, res) => {
     res.status(500).json({ msg: "Save failed" });
   }
 });
+/* DELETE IMAGE */
+router.delete("/:id", async (req, res) => {
+  try {
+    const image = await Gallery.findById(req.params.id);
+    if (!image) {
+      return res.status(404).json({ msg: "Image not found" });
+    }
+
+    // delete from cloudinary
+    if (image.publicId) {
+      await cloudinary.uploader.destroy(image.publicId);
+    }
+
+    // delete from db
+    await image.deleteOne();
+
+    res.json({ msg: "Image deleted successfully" });
+  } catch (err) {
+    console.error("DELETE ERROR:", err);
+    res.status(500).json({ msg: "Delete failed" });
+  }
+});
+
 
 module.exports = router;

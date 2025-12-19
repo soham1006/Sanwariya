@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
   FaBars, FaHome, FaPlus, FaList, FaClipboardList,
-  FaEnvelope, FaBed, FaUtensils, FaCalendarAlt
+  FaEnvelope, FaBed, FaUtensils, FaCalendarAlt,
+  FaImage
 } from "react-icons/fa";
 
 import AdminHeader from "./AdminHeader";
@@ -65,6 +66,7 @@ const AdminLayout = ({ children }) => {
             <li><NavLink to="/admin/dashboard"><FaHome /> {!collapsed && "Dashboard"}</NavLink></li>
             <li><NavLink to="/admin/add-dish"><FaPlus /> {!collapsed && "Add Dish"}</NavLink></li>
             <li><NavLink to="/admin/manage-dishes"><FaList /> {!collapsed && "All Dishes"}</NavLink></li>
+            <li><NavLink to="/admin/gallery"><FaImage /> {!collapsed && "Add Gallery Image"}</NavLink></li>
             <li><NavLink to="/admin/orders"><FaClipboardList /> {!collapsed && "Orders"}</NavLink></li>
             <li><NavLink to="/admin/messages"><FaEnvelope /> {!collapsed && "Contact Messages"}</NavLink></li>
             <li><NavLink to="/admin/room-bookings"><FaBed /> {!collapsed && "Room Bookings"}</NavLink></li>
