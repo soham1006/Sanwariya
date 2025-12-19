@@ -20,7 +20,7 @@ const AddGalleryImage = () => {
 
   try {
     const res = await fetch(
-      "http://localhost:5000/api/gallery/upload",
+      `${process.env.REACT_APP_API_BASE_URL}/api/gallery/upload`,
       {
         method: "POST",
         body: formData,
@@ -50,7 +50,7 @@ const AddGalleryImage = () => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "http://localhost:5000/api/gallery",
+        `${process.env.REACT_APP_API_BASE_URL}/api/gallery`,
         {
           method: "POST",
           headers: {
@@ -78,7 +78,7 @@ const AddGalleryImage = () => {
   };
 
   const fetchGallery = async () => {
-  const res = await fetch("http://localhost:5000/api/gallery");
+  const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/gallery`);
   const data = await res.json();
   setGallery(data);
 };
@@ -91,7 +91,7 @@ const handleDelete = async (id) => {
   if (!window.confirm("Delete this image?")) return;
 
   try {
-    const res = await fetch(`http://localhost:5000/api/gallery/${id}`, {
+    const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/gallery/${id}`, {
       method: "DELETE",
     });
 

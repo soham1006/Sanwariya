@@ -5,7 +5,7 @@ const Gallery = () => {
   const [verticalMap, setVerticalMap] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/gallery")
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/gallery`)
       .then((res) => res.json())
       .then(setImages)
       .catch(() => {});
