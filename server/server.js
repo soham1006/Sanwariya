@@ -11,12 +11,14 @@ const PORT = process.env.PORT || 5000;
 
 // Middlewares
 app.use(cors({
-  origin: "*",
+  origin: [
+    "https://shrisanwariya.in",
+    "https://www.shrisanwariya.in",
+    "http://localhost:3000"
+  ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-  preflightContinue: false,
-  optionsSuccessStatus: 200
+  credentials: true
 }));
 
 app.use(express.json({ limit: '10mb' }));
