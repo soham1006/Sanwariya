@@ -81,13 +81,13 @@ function Payment({ cart, setCart, total }) {
     phone: "",
     address: "",
     HouseNo: "",
-    paymentMethod: "Cash on Delivery",
+    paymentMethod: "COD",
     utr: "",
   });
 
   const [coordinates, setCoordinates] = useState({
-    lat: 23.2599,
-    lng: 77.4126,
+   lat: 23.33880, 
+   lng: 76.83752,
   });
 
   const [deliveryCharge, setDeliveryCharge] = useState(null);
@@ -247,20 +247,33 @@ function Payment({ cart, setCart, total }) {
     };
 
     try {
-      const res = await fetch(
-        `${process.env.REACT_APP_API_BASE_URL}/api/orders`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderDetails),
-        }
-      );
+      const token = localStorage.getItem("userToken");
 
-      if (res.ok) {
-        setOrderPlaced(true);
-        setCart([]);
-        localStorage.removeItem("cart");
-      }
+const res = await fetch(
+  `${process.env.REACT_APP_API_BASE_URL}/api/orders`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(orderDetails),
+  }
+);
+
+console.log("ORDER RESPONSE STATUS:", res.status);
+
+     const data = await res.json();
+
+if (!res.ok) {
+  toast.error(data.message || "Order failed");
+  return;
+}
+
+setOrderPlaced(true);
+setCart([]);
+localStorage.removeItem("cart");
+
     } catch {
       toast.error("Order failed");
     }
@@ -304,6 +317,7 @@ function Payment({ cart, setCart, total }) {
         </p>
 
         <button
+         type="button"
           className="btn btn-outline-warning rounded-pill px-4 py-2"
           onClick={() => navigate("/")}
         >
@@ -439,7 +453,7 @@ function Payment({ cart, setCart, total }) {
               value={formData.paymentMethod}
               onChange={handleChange}
             >
-              <option value="Cash on Delivery">Cash on Delivery</option>
+              <option value="COD">Cash on Delivery</option>
               <option value="UPI">UPI</option>
             </select>
 
@@ -513,12 +527,20 @@ function Payment({ cart, setCart, total }) {
             )}
 
             <button
-              className="btn btn-success mt-3"
-              onClick={handlePlaceOrder}
-              disabled={calculating || deliveryCharge === null}
-            >
-              Place Order
-            </button>
+  className="btn btn-success mt-3"
+  onClick={handlePlaceOrder}
+  disabled={
+    calculating ||
+    deliveryCharge === null ||
+    !localStorage.getItem("userToken") ||
+    !emailVerified ||
+    (formData.paymentMethod === "UPI" &&
+      (!upiPaid || !formData.utr || formData.utr.length < 6))
+  }
+>
+  {calculating ? "Calculating..." : "Place Order"}
+</button>
+
           </div>
 
         </div>
