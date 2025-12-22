@@ -58,15 +58,47 @@ function Menu() {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (dish) => setCart((prev) => [...prev, dish]);
+const addToCart = (dish) => {
+  setCart((prev) => {
+    const index = prev.findIndex(
+      (item) =>
+        item._id === dish._id &&
+        item.variant === dish.variant &&
+        item.price === dish.price
+    );
 
-  const removeFromCart = (index) => {
-    const newCart = [...cart];
-    newCart.splice(index, 1);
-    setCart(newCart);
-  };
+    if (index !== -1) {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        quantity: updated[index].quantity + 1,
+      };
+      return updated;
+    }
 
-  const getTotal = () => cart.reduce((sum, item) => sum + item.price, 0);
+    return [...prev, { ...dish, quantity: 1 }];
+  });
+};
+
+const removeFromCart = (index) => {
+  setCart((prev) =>
+    prev
+      .map((item, i) => {
+        if (i !== index) return item;
+
+        if (item.quantity > 1) {
+          return { ...item, quantity: item.quantity - 1 };
+        }
+
+        return null;
+      })
+      .filter(Boolean)
+  );
+};
+
+
+const getTotal = () =>
+  cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const filteredDishes = selectedCategory
     ? dishes.filter((dish) => dish.category === selectedCategory)
@@ -89,7 +121,7 @@ function Menu() {
         </h2>
         <p className="text-center text-muted mb-5">
           Enjoy home-style vegetarian meals, snacks, and hot beverages — all
-          freshly prepared with love at Shri Sanwariya Hotel.
+          freshly prepared with love at Shri Sanwariya Palace & Restaurant.
         </p>
 
         {/* CATEGORIES */}
@@ -337,8 +369,12 @@ function Menu() {
                     key={idx}
                     className="list-group-item d-flex justify-content-between align-items-center"
                   >
-                    {item.name} {item.variant ? `(${item.variant})` : ""} - ₹
-                    {item.price}
+                    {item.name} {item.variant ? `(${item.variant})` : ""}
+<br />
+<span className="text-muted">
+  ₹{item.price} × {item.quantity}
+</span>
+
                     <button
                       className="btn btn-sm btn-danger"
                       onClick={() => removeFromCart(idx)}

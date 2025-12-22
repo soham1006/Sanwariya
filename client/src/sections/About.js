@@ -6,7 +6,7 @@ function About() {
     <section id="about" className="py-5 bg-cream">
       <div className="container">
         <h2 className="text-center text-golden mb-4 elegant-title">
-          About Shri Sanwariya Hotel & Restaurant
+          About Shri Sanwariya Palace & Restaurant
         </h2>
 
         <p className="lead text-center text-muted mb-5" style={{ maxWidth: '850px', margin: '0 auto' }}>

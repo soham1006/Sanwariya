@@ -135,7 +135,7 @@ router.post("/", async (req, res) => {
       await resend.emails.send({
         from: process.env.RESEND_FROM_EMAIL,
         to: email,
-        subject: "Order Confirmed – Shri Sanwariya Hotel & Restaurant",
+        subject: "Order Confirmed – Shri Sanwariya Palace & Restaurant",
         text: `
 Thank you for your order, ${name}
 
@@ -147,7 +147,7 @@ Total Amount: Rs ${finalTotal}
 Delivery Address:
 ${address}
 
-Shri Sanwariya Hotel & Restaurant
+Shri Sanwariya Palace & Restaurant
         `,
         html: `
 <!DOCTYPE html>
@@ -175,7 +175,7 @@ Shri Sanwariya Hotel & Restaurant
 
     <p>
       We will contact you shortly for delivery confirmation.<br/>
-      <strong>Shri Sanwariya Hotel & Restaurant</strong>
+      <strong>Shri Sanwariya Palace & Restaurant</strong>
     </p>
   </body>
 </html>
