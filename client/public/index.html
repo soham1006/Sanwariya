@@ -3,47 +3,66 @@
   <head>
     <meta charset="utf-8" />
 
-    <link rel="icon" href="%PUBLIC_URL%/logo192.png" />
+    <!-- ✅ Favicon (recommended PNG, not logo192) -->
+    <link rel="icon" type="image/png" href="%PUBLIC_URL%/favicon.ico" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
+    <!-- Viewport & Theme -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="robots" content="index, follow" />
 
-    <!-- Primary SEO -->
-    <title>Shri Sanwariya Palace & Restaurant</title>
+    <!-- ✅ Primary SEO -->
+    <title>Shri Sanwariya Palace & Restaurant | Hotel & Pure Veg Dining</title>
     <meta
       name="description"
-      content="Shri Sanwariya Palace & Restaurant – Luxury stay, pure vegetarian restaurant, events & online bookings."
+      content="Shri Sanwariya Palace & Restaurant offers comfortable hotel rooms, pure vegetarian dining, event hosting, and easy online booking in Madhya Pradesh."
     />
     <link rel="canonical" href="https://shrisanwariya.in/" />
 
-    <!-- Open Graph / Facebook / WhatsApp -->
+    <!-- ✅ Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://shrisanwariya.in/" />
-    <meta property="og:title" content="Shri Sanwariya Palace & Restaurant" />
+    <meta
+      property="og:title"
+      content="Shri Sanwariya Palace & Restaurant"
+    />
     <meta
       property="og:description"
-      content="Luxury stay, restaurant, event bookings & premium services at Shri Sanwariya."
+      content="Comfortable stay, pure vegetarian restaurant, events & premium services at Shri Sanwariya Palace."
     />
     <meta
       property="og:image"
       content="https://shrisanwariya.in/images/og-image.jpg"
     />
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://shrisanwariya.in/" />
-    <meta property="twitter:title" content="Shri Sanwariya Palace & Restaurant" />
+    <!-- ✅ Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://shrisanwariya.in/" />
     <meta
-      property="twitter:description"
-      content="Luxury stay, restaurant & events at Shri Sanwariya Palace."
+      name="twitter:title"
+      content="Shri Sanwariya Palace & Restaurant"
     />
     <meta
-      property="twitter:image"
+      name="twitter:description"
+      content="Luxury stay, pure veg restaurant & events at Shri Sanwariya Palace."
+    />
+    <meta
+      name="twitter:image"
       content="https://shrisanwariya.in/images/og-image.jpg"
     />
+
+    <!-- ✅ Google Logo (Structured Data) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Shri Sanwariya Palace & Restaurant",
+        "url": "https://shrisanwariya.in",
+        "logo": "https://shrisanwariya.in/logo512.png"
+      }
+    </script>
 
     <!-- Styles -->
     <link
@@ -57,7 +76,12 @@
   </head>
 
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- ✅ SEO-friendly noscript -->
+    <noscript>
+      Shri Sanwariya Palace & Restaurant offers comfortable rooms, pure vegetarian
+      dining, and easy booking services in Madhya Pradesh.
+    </noscript>
+
     <div id="root"></div>
   </body>
 </html>
