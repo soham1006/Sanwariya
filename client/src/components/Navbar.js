@@ -190,7 +190,7 @@ function Navbar() {
     </ScrollLink>
   ) : (
     <RouterLink
-      to="/gallery"
+      to="/"
       onClick={closeNavbar}
       className="nav-link text-uppercase fw-semibold"
     >
