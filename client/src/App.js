@@ -25,6 +25,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Gallery from "./sections/Gallery";
+import Contact from "./sections/Contact";
 
 // SECTIONS / LAYOUT
 import Navbar from "./components/Navbar";
@@ -66,6 +67,7 @@ function AppWrapper() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/gallery" element={<Gallery />} />
+        <Route path="/contact" element={<Contact />} />
 
         {/* ---------- USER PROTECTED ---------- */}
         <Route

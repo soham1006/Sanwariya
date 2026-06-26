@@ -72,7 +72,7 @@ const Gallery = () => {
   ];
 
   return (
-    <section className="py-5" style={{ backgroundColor: "#fffaf2" }}>
+    <section id="gallery" className="py-5" style={{ backgroundColor: "#fffaf2" }}>
       <div className="container">
         <h2 className="text-center mb-5 fw-semibold text-golden elegant-title">
           Our Gallery
